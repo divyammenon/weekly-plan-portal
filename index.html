@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Plan Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<!-- Firebase (free tier) — provides the shared database so teachers, admin, and
+     students all see the same data from any device, anywhere with internet. -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --ink:#1c2b3a;
+    --paper:#eef2f6;
+    --card:#ffffff;
+    --rail:#c9d3dd;
+    --accent:#e2a33e;      /* chalk-gold */
+    --accent-ink:#7a4e08;
+    --teal:#2f7d6b;        /* chalkboard green */
+    --teal-deep:#1f5346;
+    --coral:#d1573f;       /* missing / alert */
+    --coral-soft:#fbe6e1;
+    --success-soft:#e2f2ea;
+    --shadow: 0 6px 18px rgba(28,43,58,0.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #f7f3e9 0%, transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  .wrap{max-width:980px;margin:0 auto;}
+
+  /* Header — classroom door sign */
+  header{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    flex-wrap:wrap;gap:16px;margin-bottom:22px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-mark{
+    width:52px;height:52px;border-radius:14px;
+    background:linear-gradient(155deg,var(--teal),var(--teal-deep));
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;box-shadow:var(--shadow);flex-shrink:0;
+  }
+  h1{
+    font-family:'Baloo 2',sans-serif;font-weight:800;
+    font-size:26px;margin:0;letter-spacing:0.2px;
+  }
+  .sub{margin:2px 0 0;color:#5b6b7a;font-size:13.5px;}
+
+  nav.roles{display:flex;gap:8px;background:#dfe6ed;padding:5px;border-radius:12px;}
+  nav.roles button{
+    border:none;background:transparent;padding:9px 16px;border-radius:9px;
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;color:#5b6b7a;
+    cursor:pointer;transition:.15s;
+  }
+  nav.roles button.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow);}
+
+  /* Week strip */
+  .week-bar{
+    display:flex;align-items:center;justify-content:center;gap:14px;
+    margin:18px 0 22px;
+  }
+  .week-bar button{
+    width:34px;height:34px;border-radius:50%;border:1.5px solid var(--rail);
+    background:var(--card);cursor:pointer;font-size:15px;color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .week-bar button:hover{border-color:var(--teal);color:var(--teal-deep);}
+  .week-label{
+    font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13.5px;
+    background:var(--card);padding:8px 16px;border-radius:999px;box-shadow:var(--shadow);
+    color:var(--teal-deep);
+  }
+
+  .card{
+    background:var(--card);border-radius:16px;box-shadow:var(--shadow);
+    padding:22px 24px;margin-bottom:18px;
+  }
+  .card h2{
+    font-family:'Baloo 2',sans-serif;font-size:18px;margin:0 0 14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  label{font-size:12.5px;font-weight:600;color:#5b6b7a;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em;}
+  select,input[type=text],textarea{
+    width:100%;border:1.5px solid var(--rail);border-radius:10px;padding:9px 11px;
+    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fafbfc;
+    resize:vertical;
+  }
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+  .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .row>div{flex:1;min-width:160px;}
+
+  .btn{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;
+    border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:.15s;
+  }
+  .btn-primary{background:var(--teal);color:#fff;}
+  .btn-primary:hover{background:var(--teal-deep);}
+  .btn-ghost{background:transparent;color:var(--coral);border:1.5px solid var(--coral-soft);}
+  .btn-ghost:hover{background:var(--coral-soft);}
+  .btn-sm{padding:6px 12px;font-size:12.5px;}
+
+  /* Timetable — signature element */
+  .timetable{
+    display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;
+    overflow-x:auto;padding-bottom:4px;
+  }
+  .day-col{
+    background:#fbfcfd;border:1.5px solid var(--rail);border-radius:12px;
+    padding:12px;min-width:150px;
+  }
+  .day-col .day-name{
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;
+    color:var(--teal-deep);margin-bottom:8px;border-bottom:2px dashed var(--rail);padding-bottom:6px;
+  }
+  .day-col textarea{min-height:54px;font-size:13px;margin-bottom:8px;}
+  .day-col textarea:last-child{margin-bottom:0;}
+  .day-col .field-tag{font-size:10px;color:#8b98a5;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;display:block;}
+
+  .status-pill{
+    display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
+    font-size:12px;font-weight:600;
+  }
+  .status-pill.ok{background:var(--success-soft);color:var(--teal-deep);}
+  .status-pill.missing{background:var(--coral-soft);color:var(--coral);}
+
+  /* Admin register table */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{
+    text-align:left;font-family:'Baloo 2',sans-serif;font-size:12px;text-transform:uppercase;
+    letter-spacing:.03em;color:#8b98a5;padding:8px 10px;border-bottom:2px solid var(--rail);
+  }
+  td{padding:10px;border-bottom:1px solid #eef1f4;vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .teacher-name{font-weight:600;}
+  .class-chip{
+    background:#eef2f6;border-radius:6px;padding:2px 8px;font-size:12px;color:#5b6b7a;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  .roster-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 12px;background:#fbfcfd;border:1.5px solid var(--rail);border-radius:10px;margin-bottom:8px;
+  }
+  .class-block{
+    border:1.5px solid var(--rail);border-radius:12px;padding:12px 16px;margin-bottom:10px;
+  }
+  .class-block summary{
+    cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;list-style:none;
+  }
+  .class-block summary::-webkit-details-marker{display:none;}
+  .class-block summary::before{content:'▸';color:#8b98a5;margin-right:6px;transition:.15s;}
+  .class-block[open] summary::before{transform:rotate(90deg);display:inline-block;}
+  .class-block table{margin-top:12px;}
+  .empty{
+    text-align:center;padding:40px 20px;color:#8b98a5;font-size:14px;
+  }
+  .empty .big{font-size:34px;display:block;margin-bottom:8px;}
+
+  .plan-view h3{font-family:'Baloo 2',sans-serif;font-size:16px;margin:18px 0 8px;color:var(--teal-deep);}
+  .plan-view p{margin:0 0 10px;line-height:1.5;font-size:14px;}
+  .objectives{
+    background:#f7f3e9;border-left:4px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;
+    font-size:13.5px;margin-bottom:14px;
+  }
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;font-size:13.5px;
+    font-family:'Baloo 2',sans-serif;font-weight:600;box-shadow:var(--shadow);
+    opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+  .hint{font-size:12px;color:#8b98a5;margin-top:6px;}
+  @media(max-width:640px){
+    header{flex-direction:column;align-items:flex-start;}
+    nav.roles{width:100%;}
+    nav.roles button{flex:1;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">🗓️</div>
+      <div>
+        <h1>Weekly Plan Board</h1>
+        <p class="sub">One board, three views — teachers post it, admin tracks it, students read it.</p>
+      </div>
+    </div>
+    <nav class="roles">
+      <button data-role="teacher" class="active">🧑‍🏫 Teacher</button>
+      <button data-role="admin">🛡️ Admin</button>
+      <button data-role="student">🎒 Student</button>
+    </nav>
+  </header>
+
+  <div class="week-bar">
+    <button id="prevWeek">‹</button>
+    <div class="week-label" id="weekLabel">—</div>
+    <button id="nextWeek">›</button>
+  </div>
+
+  <div id="app"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   PASTE YOUR FIREBASE CONFIG BELOW — see setup steps for how
+   to get these six values from your Firebase project console.
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAIqWcxo80a2Z1405QwZg1EyVPntSNeDVs",
+  authDomain: "weekly-plan-portal.firebaseapp.com",
+  projectId: "weekly-plan-portal",
+  storageBucket: "weekly-plan-portal.firebasestorage.app",
+  messagingSenderId: "152031841842",
+  appId: "1:152031841842:web:99a2ee312ab0e83452b62b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+/* ============================================================ */
+
+const DAYS = [['mon','Mon'],['tue','Tue'],['wed','Wed'],['thu','Thu'],['fri','Fri']];
+const CLASS_STRUCTURE = [
+  {grade:'Grade 1', classes:['1-1','1-2','1-3']},
+  {grade:'Grade 2', classes:['2-1','2-2','2-3']},
+  {grade:'Grade 3', classes:['3-1','3-2']},
+  {grade:'Grade 4', classes:['4-1','4-2']},
+  {grade:'Grade 5', classes:['Grade 5']},
+  {grade:'Grade 6', classes:['Grade 6']},
+  {grade:'Grade 7', classes:['7-1','7-2']},
+  {grade:'Grade 8', classes:['Grade 8']},
+  {grade:'Grade 9', classes:['9 GEN','9 ADV']},
+  {grade:'Grade 10', classes:['10 GEN','10 ADV']},
+  {grade:'Grade 11', classes:['11 GEN1','11 GEN2','11 ADV']},
+  {grade:'Grade 12', classes:['12 GEN1','12 GEN2','12 ADV']}
+];
+function classOptionsHtml(){
+  return CLASS_STRUCTURE.map(g=>`
+    <optgroup label="${g.grade}">
+      ${g.classes.map(c=>`<option value="${c}">${c}</option>`).join('')}
+    </optgroup>
+  `).join('');
+}
+const ALL_CLASSES = CLASS_STRUCTURE.flatMap(g=>g.classes);
+const GRADE1_TO_10 = CLASS_STRUCTURE.slice(0,10).flatMap(g=>g.classes);
+const GRADE1_TO_8 = CLASS_STRUCTURE.slice(0,8).flatMap(g=>g.classes);
+const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
+const SUBJECT_CLASS_MAP = {
+  'ENGLISH': ALL_CLASSES,
+  'ARABIC': ALL_CLASSES,
+  'ISLAMIC': ALL_CLASSES,
+  'MATHEMATICS': ALL_CLASSES,
+  'PE': ALL_CLASSES,
+  'MUSIC': GRADE1_TO_10,
+  'ARTS': GRADE1_TO_10,
+  'SCIENCE': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
+  'FRENCH': GRADE5_TO_12,
+  'HEALTH SCIENCE': ['11 GEN1','11 ADV','12 GEN1','12 GEN2','12 ADV'],
+  'PHYSICS': ['9 ADV','10 ADV','11 ADV','12 GEN2','12 ADV'],
+  'BIOLOGY': ['9 ADV','11 GEN1','12 GEN1','12 GEN2','12 ADV'],
+  'CHEMISTRY': ['10 ADV','11 GEN1','11 ADV','12 GEN1']
+};
+const SUBJECTS = Object.keys(SUBJECT_CLASS_MAP);
+function subjectsForClass(className){
+  return SUBJECTS.filter(s=>SUBJECT_CLASS_MAP[s].includes(className));
+}
+function subjectOptionsHtml(className){
+  return subjectsForClass(className).map(s=>`<option value="${s}">${s}</option>`).join('');
+}
+let role = 'teacher';
+let weekStart = mondayOf(new Date());
+let currentClass = ALL_CLASSES[0];
+let currentSubject = subjectsForClass(currentClass)[0];
+
+function mondayOf(d){
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = (day === 0 ? -6 : 1) - day;
+  date.setDate(date.getDate() + diff);
+  date.setHours(0,0,0,0);
+  return date.toISOString().slice(0,10);
+}
+function addDays(dateStr, n){
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0,10);
+}
+function weekLabelText(ws){
+  const start = new Date(ws + 'T00:00:00');
+  const end = new Date(addDays(ws,4) + 'T00:00:00');
+  const opts = {month:'short', day:'numeric'};
+  const startStr = start.toLocaleDateString('en-US', opts);
+  const endStr = end.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  return `${startStr} – ${endStr}`;
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function slug(str){ return str.replace(/\s+/g,'_').toUpperCase(); }
+function planKey(className, subject, ws){ return `plan:${slug(className)}:${slug(subject)}:${ws}`; }
+function emptyPlan(){
+  return { teacherName:'', days:{mon:{topic:'',homework:''},tue:{topic:'',homework:''},wed:{topic:'',homework:''},thu:{topic:'',homework:''},fri:{topic:'',homework:''}}, submittedAt:null };
+}
+
+async function loadPlan(className, subject, ws){
+  try{
+    const doc = await db.collection('plans').doc(planKey(className, subject, ws)).get();
+    return doc.exists ? doc.data() : null;
+  }catch(e){ console.error('loadPlan failed:', e); return null; }
+}
+async function savePlan(className, subject, ws, plan){
+  await db.collection('plans').doc(planKey(className, subject, ws)).set(plan);
+}
+async function loadSettings(){
+  try{
+    const doc = await db.collection('settings').doc('main').get();
+    return doc.exists ? doc.data() : {teacherPin:'1234'};
+  }catch(e){ console.error('loadSettings failed:', e); return {teacherPin:'1234'}; }
+}
+async function saveSettings(settings){
+  await db.collection('settings').doc('main').set(settings);
+}
+let teacherUnlocked = false;
+
+function render(){
+  document.getElementById('weekLabel').textContent = weekLabelText(weekStart);
+  const app = document.getElementById('app');
+  if(role === 'teacher') renderTeacher(app);
+  else if(role === 'admin') renderAdmin(app);
+  else renderStudent(app);
+}
+
+/* ---------- TEACHER ---------- */
+async function renderTeacher(app){
+  if(!teacherUnlocked){
+    app.innerHTML = `
+      <div class="card">
+        <h2>🔒 Teacher access</h2>
+        <p class="hint" style="margin-bottom:12px;">Enter the teacher PIN to post or edit a weekly plan. Ask your admin if you don't have it.</p>
+        <div class="row">
+          <div><input type="text" id="pinInput" placeholder="PIN" style="letter-spacing:3px;"></div>
+          <div style="flex:0 0 auto;"><button class="btn btn-primary" id="pinSubmit">Unlock</button></div>
+        </div>
+      </div>
+    `;
+    const tryUnlock = async ()=>{
+      const settings = await loadSettings();
+      const entered = document.getElementById('pinInput').value.trim();
+      if(entered && entered === settings.teacherPin){
+        teacherUnlocked = true;
+        render();
+      }else{
+        toast('Incorrect PIN');
+      }
+    };
+    document.getElementById('pinSubmit').onclick = tryUnlock;
+    document.getElementById('pinInput').onkeydown = (e)=>{ if(e.key==='Enter') tryUnlock(); };
+    return;
+  }
+  if(!subjectsForClass(currentClass).includes(currentSubject)){
+    currentSubject = subjectsForClass(currentClass)[0];
+  }
+  const plan = (await loadPlan(currentClass, currentSubject, weekStart)) || emptyPlan();
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🗓️ Select your class & subject</h2>
+      <div class="row">
+        <div>
+          <label>Class</label>
+          <select id="classSelect">${classOptionsHtml().replace(`value="${currentClass}"`, `value="${currentClass}" selected`)}</select>
+        </div>
+        <div>
+          <label>Subject</label>
+          <select id="subjectSelect">${subjectsForClass(currentClass).map(s=>`<option value="${s}" ${s===currentSubject?'selected':''}>${s}</option>`).join('')}</select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🗓️ ${currentClass} — ${currentSubject} — Weekly Plan <span class="status-pill ${plan.submittedAt?'ok':'missing'}">${plan.submittedAt?'Posted':'Not posted yet'}</span></h2>
+      <div class="row">
+        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Divya"></div>
+      </div>
+      <div class="timetable">
+        ${DAYS.map(([key,label])=>`
+          <div class="day-col">
+            <div class="day-name">${label}</div>
+            <span class="field-tag">Topic / focus</span>
+            <textarea data-day="${key}" data-field="topic" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
+            <span class="field-tag">Homework / notes</span>
+            <textarea data-day="${key}" data-field="homework" placeholder="Anything to send home?">${plan.days[key]?.homework||''}</textarea>
+          </div>
+        `).join('')}
+      </div>
+      <p class="hint">${plan.submittedAt ? 'Last posted ' + new Date(plan.submittedAt).toLocaleString() : "Students can't see this until you post it."}</p>
+      <div style="margin-top:14px;display:flex;gap:10px;">
+        <button class="btn btn-primary" id="postPlan">✅ Post this week's plan</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('classSelect').onchange = (e)=>{
+    currentClass = e.target.value;
+    currentSubject = subjectsForClass(currentClass)[0];
+    render();
+  };
+  document.getElementById('subjectSelect').onchange = (e)=>{ currentSubject = e.target.value; render(); };
+  document.getElementById('postPlan').onclick = async ()=>{
+    const newPlan = emptyPlan();
+    newPlan.teacherName = document.getElementById('teacherName').value.trim();
+    document.querySelectorAll('.day-col textarea[data-day]').forEach(ta=>{
+      const day = ta.dataset.day, field = ta.dataset.field;
+      newPlan.days[day][field] = ta.value.trim();
+    });
+    newPlan.submittedAt = new Date().toISOString();
+    await savePlan(currentClass, currentSubject, weekStart, newPlan);
+    toast('Weekly plan posted ✓');
+    render();
+  };
+}
+
+/* ---------- ADMIN ---------- */
+async function buildConsolidated(){
+  return Promise.all(ALL_CLASSES.map(async cls=>{
+    const subs = subjectsForClass(cls);
+    const plans = await Promise.all(subs.map(s=>loadPlan(cls, s, weekStart)));
+    return {cls, subs, plans};
+  }));
+}
+async function renderAdmin(app){
+  const settings = await loadSettings();
+  const rows = await buildConsolidated();
+  const byClass = Object.fromEntries(rows.map(r=>[r.cls, r]));
+  let totalSubs=0, totalPosted=0;
+  rows.forEach(r=>{ totalSubs += r.subs.length; totalPosted += r.plans.filter(p=>p && p.submittedAt).length; });
+  const missing = totalSubs - totalPosted;
+
+  app.innerHTML = `
+    <div class="card">
+      <h2>🔐 Teacher access PIN</h2>
+      <p class="hint" style="margin-bottom:12px;">Teachers need this PIN before they can post or edit a weekly plan. Share it only with your teaching staff.</p>
+      <div class="row">
+        <div><input type="text" id="pinField" value="${escapeHtml(settings.teacherPin)}" style="letter-spacing:3px;"></div>
+        <div style="flex:0 0 auto;"><button class="btn btn-primary" id="savePin">Save PIN</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📋 Consolidated view — week of ${weekLabelText(weekStart)}
+        ${missing>0 ? `<span class="status-pill missing">${missing} missing</span>` : `<span class="status-pill ok">All posted 🎉</span>`}
+      </h2>
+      <p class="hint">${totalPosted} of ${totalSubs} class-subject plans posted this week. Click a class to see the subject breakdown.</p>
+    </div>
+    ${CLASS_STRUCTURE.map(g=>`
+      <div class="card">
+        <h2>${g.grade}</h2>
+        ${g.classes.map(cls=>{
+          const row = byClass[cls];
+          const posted = row.plans.filter(p=>p && p.submittedAt).length;
+          const total = row.subs.length;
+          const allDone = posted === total;
+          return `
+          <details class="class-block">
+            <summary>
+              <span class="teacher-name">${cls}</span>
+              <span class="status-pill ${allDone?'ok':'missing'}">${posted}/${total} posted</span>
+            </summary>
+            <table>
+              <thead><tr><th>Subject</th><th>Status</th><th>Teacher</th><th></th></tr></thead>
+              <tbody>
+                ${row.subs.map((s,i)=>{
+                  const p = row.plans[i];
+                  const done = p && p.submittedAt;
+                  return `<tr>
+                    <td>${s}</td>
+                    <td>${done ? '<span class="status-pill ok">✓ Posted</span>' : '<span class="status-pill missing">✕ Missing</span>'}</td>
+                    <td>${done && p.teacherName ? escapeHtml(p.teacherName) : '—'}</td>
+                    <td>${done ? `<button class="btn btn-ghost btn-sm" data-view-class="${cls}" data-view-subject="${s}">View</button>` : ''}</td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </details>`;
+        }).join('')}
+      </div>
+    `).join('')}
+    <div class="card" id="planDetail" style="display:none;"></div>
+  `;
+
+  app.querySelectorAll('[data-view-class]').forEach(btn=>{
+    btn.onclick = async ()=>{
+      const cls = btn.dataset.viewClass, subj = btn.dataset.viewSubject;
+      const plan = await loadPlan(cls, subj, weekStart);
+      const detail = document.getElementById('planDetail');
+      detail.style.display = 'block';
+      detail.innerHTML = renderPlanView(cls, subj, plan);
+      detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+    };
+  });
+}
+
+/* ---------- STUDENT ---------- */
+async function renderStudent(app){
+  app.innerHTML = `
+    <div class="card">
+      <h2>🎒 Pick your class</h2>
+      <select id="classSelect">${classOptionsHtml()}</select>
+    </div>
+    <div id="studentPlan"></div>
+  `;
+  const showPlan = async ()=>{
+    const className = document.getElementById('classSelect').value;
+    const subs = subjectsForClass(className);
+    const container = document.getElementById('studentPlan');
+    container.innerHTML = `<div class="card empty"><span class="big">⏳</span>Loading this week's plan…</div>`;
+    const blocks = await Promise.all(subs.map(async s=>{
+      const plan = await loadPlan(className, s, weekStart);
+      return renderPlanView(className, s, plan);
+    }));
+    container.innerHTML = blocks.map(b=>`<div class="card">${b}</div>`).join('');
+  };
+  document.getElementById('classSelect').onchange = showPlan;
+  showPlan();
+}
+
+function renderPlanView(className, subject, plan){
+  if(!plan || !plan.submittedAt){
+    return `<h2>${className} — ${subject}</h2><div class="empty"><span class="big">⏳</span>This week's plan isn't posted yet. Check back soon!</div>`;
+  }
+  return `
+    <h2>🗓️ ${className} — ${subject}${plan.teacherName ? ' — ' + escapeHtml(plan.teacherName) : ''} <span class="status-pill ok">Posted</span></h2>
+    <div class="timetable">
+      ${DAYS.map(([key,label])=>`
+        <div class="day-col">
+          <div class="day-name">${label}</div>
+          <span class="field-tag">Topic</span>
+          <p style="font-size:13px;margin:0 0 8px;">${plan.days[key]?.topic ? escapeHtml(plan.days[key].topic) : '<em style="color:#aab4bd;">—</em>'}</p>
+          <span class="field-tag">Homework</span>
+          <p style="font-size:13px;margin:0;">${plan.days[key]?.homework ? escapeHtml(plan.days[key].homework) : '<em style="color:#aab4bd;">—</em>'}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- WIRING ---------- */
+document.querySelectorAll('nav.roles button').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('nav.roles button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    role = btn.dataset.role;
+    render();
+  };
+});
+document.getElementById('prevWeek').onclick = ()=>{ weekStart = addDays(weekStart,-7); render(); };
+document.getElementById('nextWeek').onclick = ()=>{ weekStart = addDays(weekStart,7); render(); };
+
+/* Lock the view to one role when opened via ?role=teacher / admin / student.
+   This hides the role switcher entirely so a student link never shows the
+   teacher entry form or the admin dashboard. */
+function applyRoleLock(){
+  const params = new URLSearchParams(window.location.search);
+  const locked = params.get('role');
+  if(locked && ['teacher','admin','student'].includes(locked)){
+    role = locked;
+    document.querySelector('nav.roles').style.display = 'none';
+    document.querySelectorAll('nav.roles button').forEach(b=>b.classList.toggle('active', b.dataset.role===locked));
+  }
+}
+
+(function init(){
+  applyRoleLock();
+  render();
+})();
+</script>
+</body>
+</html>

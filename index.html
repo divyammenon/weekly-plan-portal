@@ -186,6 +186,21 @@
     nav.roles{width:100%;}
     nav.roles button{flex:1;}
   }
+
+  /* Printing — hidden on screen, shown only in the print dialog */
+  #printArea{display:none;}
+  @media print{
+    body > *:not(#printArea){display:none !important;}
+    #printArea{display:block !important;}
+    #printArea h1{font-family:'Baloo 2',sans-serif;font-size:20px;margin:0 0 2px;}
+    #printArea .print-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:#555;margin:0 0 14px;}
+    .print-table{width:100%;border-collapse:collapse;font-size:11px;}
+    .print-table th,.print-table td{border:1px solid #999;padding:6px 7px;text-align:left;vertical-align:top;}
+    .print-table th{background:#eee;font-family:'Baloo 2',sans-serif;}
+    .print-table tr{page-break-inside:avoid;}
+    .print-empty{color:#999;text-align:center;}
+    .print-teacher{font-weight:400;color:#555;font-size:10px;}
+  }
 </style>
 </head>
 <body>
@@ -214,6 +229,7 @@
   <div id="app"></div>
 </div>
 <div class="toast" id="toast"></div>
+<div id="printArea"></div>
 
 <script>
 /* ============================================================
@@ -479,7 +495,10 @@ async function renderAdmin(app){
           <details class="class-block">
             <summary>
               <span class="teacher-name">${cls}</span>
-              <span class="status-pill ${allDone?'ok':'missing'}">${posted}/${total} posted</span>
+              <span style="display:flex;align-items:center;gap:8px;">
+                <span class="status-pill ${allDone?'ok':'missing'}">${posted}/${total} posted</span>
+                <button class="btn btn-ghost btn-sm" data-print-class="${cls}">🖨️ Print</button>
+              </span>
             </summary>
             <table>
               <thead><tr><th>Subject</th><th>Status</th><th>Teacher</th><th></th></tr></thead>
@@ -503,6 +522,13 @@ async function renderAdmin(app){
     <div class="card" id="planDetail" style="display:none;"></div>
   `;
 
+  app.querySelectorAll('[data-print-class]').forEach(btn=>{
+    btn.onclick = (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      printClassSchedule(btn.dataset.printClass);
+    };
+  });
   app.querySelectorAll('[data-view-class]').forEach(btn=>{
     btn.onclick = async ()=>{
       const cls = btn.dataset.viewClass, subj = btn.dataset.viewSubject;
@@ -520,10 +546,16 @@ async function renderStudent(app){
   app.innerHTML = `
     <div class="card">
       <h2>🎒 Pick your class</h2>
-      <select id="classSelect">${classOptionsHtml()}</select>
+      <div class="row">
+        <div><select id="classSelect">${classOptionsHtml()}</select></div>
+        <div style="flex:0 0 auto;"><button class="btn btn-primary" id="printBtn">🖨️ Print / Save as PDF</button></div>
+      </div>
     </div>
     <div id="studentPlan"></div>
   `;
+  document.getElementById('printBtn').onclick = ()=>{
+    printClassSchedule(document.getElementById('classSelect').value);
+  };
   const showPlan = async ()=>{
     const className = document.getElementById('classSelect').value;
     const subs = subjectsForClass(className);
@@ -561,6 +593,35 @@ function renderPlanView(className, subject, plan){
 
 function escapeHtml(s){
   return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- PRINT / PDF ---------- */
+async function printClassSchedule(className){
+  const subs = subjectsForClass(className);
+  const plans = await Promise.all(subs.map(s=>loadPlan(className, s, weekStart)));
+  const printArea = document.getElementById('printArea');
+  printArea.innerHTML = `
+    <h1>${className} — Weekly Plan</h1>
+    <p class="print-sub">${weekLabelText(weekStart)}</p>
+    <table class="print-table">
+      <thead><tr><th>Subject</th>${DAYS.map(([k,l])=>`<th>${l}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${subs.map((s,i)=>{
+          const p = plans[i];
+          const posted = p && p.submittedAt;
+          return `<tr>
+            <td><strong>${s}</strong>${posted && p.teacherName ? `<br><span class="print-teacher">${escapeHtml(p.teacherName)}</span>` : ''}</td>
+            ${DAYS.map(([k])=>{
+              if(!posted) return `<td class="print-empty">—</td>`;
+              const day = p.days[k] || {};
+              return `<td>${day.topic ? escapeHtml(day.topic) : '—'}${day.homework ? `<br><em>HW: ${escapeHtml(day.homework)}</em>` : ''}</td>`;
+            }).join('')}
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  window.print();
 }
 
 /* ---------- WIRING ---------- */

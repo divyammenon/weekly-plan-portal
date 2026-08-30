@@ -275,8 +275,8 @@ const GRADE1_TO_10 = CLASS_STRUCTURE.slice(0,10).flatMap(g=>g.classes);
 const GRADE1_TO_8 = CLASS_STRUCTURE.slice(0,8).flatMap(g=>g.classes);
 const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
 const SUBJECT_CLASS_MAP = {
-  'ENGLISH': ALL_CLASSES,
-  'ARABIC': ALL_CLASSES,
+  'ENGLISH اللغة الانجليزية': ALL_CLASSES,
+  'ARABIC اللغة العربية': ALL_CLASSES,
   'ISLAMIC': ALL_CLASSES,
   'MATHEMATICS': ALL_CLASSES,
   'PE': ALL_CLASSES,
@@ -413,7 +413,7 @@ async function renderTeacher(app){
     <div class="card">
       <h2>🗓️ ${currentClass} — ${currentSubject} — Weekly Plan <span class="status-pill ${plan.submittedAt?'ok':'missing'}">${plan.submittedAt?'Posted':'Not posted yet'}</span></h2>
       <div class="row">
-        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Karishma"></div>
+        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Divya"></div>
       </div>
       <div class="timetable">
         ${DAYS.map(([key,label])=>`

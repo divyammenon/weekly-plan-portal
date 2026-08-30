@@ -277,18 +277,18 @@ const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
 const SUBJECT_CLASS_MAP = {
   'ENGLISH اللغة الانجليزية': ALL_CLASSES,
   'ARABIC اللغة العربية': ALL_CLASSES,
-  'ISLAMIC': ALL_CLASSES,
-  'MATHEMATICS': ALL_CLASSES,
-  'PE': ALL_CLASSES,
+  'ISLAMIC التربية الإسلامية': ALL_CLASSES,
+  'MATHEMATICSالرياضيات': ALL_CLASSES,
+  'PE التربية البدنية': ALL_CLASSES,
   'AI AND TECHNOLOGY': ALL_CLASSES,
-  'MUSIC': GRADE1_TO_10,
-  'ARTS': GRADE1_TO_10,
-  'SCIENCE': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
-  'FRENCH': GRADE5_TO_12,
-  'HEALTH SCIENCE': ['11 GEN1','11 ADV','12 GEN1','12 GEN2','12 ADV'],
-  'PHYSICS': ['9 ADV','10 ADV','11 ADV','12 GEN2','12 ADV'],
-  'BIOLOGY': ['9 ADV','11 GEN1','12 GEN1','12 GEN2','12 ADV'],
-  'CHEMISTRY': ['10 ADV','11 GEN1','11 ADV','12 GEN1']
+  'MUSICالموسيقى': GRADE1_TO_10,
+  'ARTSالفنون البصرية': GRADE1_TO_10,
+  'SCIENCE العلوم': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
+  'FRENCHاللغة الفرنسية': GRADE5_TO_12,
+  'HEALTH SCIENCE العلوم الصحية': ['11 GEN1','11 ADV','12 GEN1','12 GEN2','12 ADV'],
+  'PHYSICSالفيزياء': ['9 ADV','10 ADV','11 ADV','12 GEN2','12 ADV'],
+  'BIOLOGYالأحياء': ['9 ADV','11 GEN1','12 GEN1','12 GEN2','12 ADV'],
+  'CHEMISTRY الكيمياء': ['10 ADV','11 GEN1','11 ADV','12 GEN1']
 };
 const SUBJECTS = Object.keys(SUBJECT_CLASS_MAP);
 function subjectsForClass(className){

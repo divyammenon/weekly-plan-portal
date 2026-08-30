@@ -280,6 +280,7 @@ const SUBJECT_CLASS_MAP = {
   'ISLAMIC': ALL_CLASSES,
   'MATHEMATICS': ALL_CLASSES,
   'PE': ALL_CLASSES,
+  'AI AND TECHNOLOGY': ALL_CLASSES,
   'MUSIC': GRADE1_TO_10,
   'ARTS': GRADE1_TO_10,
   'SCIENCE': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
@@ -412,7 +413,7 @@ async function renderTeacher(app){
     <div class="card">
       <h2>🗓️ ${currentClass} — ${currentSubject} — Weekly Plan <span class="status-pill ${plan.submittedAt?'ok':'missing'}">${plan.submittedAt?'Posted':'Not posted yet'}</span></h2>
       <div class="row">
-        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Divya"></div>
+        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Karishma"></div>
       </div>
       <div class="timetable">
         ${DAYS.map(([key,label])=>`

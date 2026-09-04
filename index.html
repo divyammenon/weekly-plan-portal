@@ -334,22 +334,22 @@ const AI_TECH_CLASSES = ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV'
    instead of retyping the string, so editing the Arabic text here updates
    everywhere at once and can never fall out of sync again. */
 const SUBJ = {
-  ENGLISH: 'ENGLISH اللغة الانجليزية ',
+  ENGLISH: 'ENGLISH انجلش ',
   ARABIC: 'ARABIC اللغة العربية  ',
-  ISLAMIC: 'ISLAMIC  التربية الاسلامية ',
+  ISLAMIC: 'ISLAMIC  إسلامية ',
   MATHEMATICS: 'MATHEMATICSالرياضيات ',
-  PE: 'PE التربية البدنية والرياضية ',
-  SOCIAL_STUDIES: 'SOCIAL STUDIES الدراسات الاجتماعيات ',
+  PE: 'PE الرياضة ',
+  SOCIAL_STUDIES: 'SOCIAL STUDIES اجتماعيات ',
   AI_TECH: 'AI AND TECHNOLOGY',
- ACTIVITY: 'ACTIVITY حصة النشاط ',
-  MUSIC: 'MUSIC الموسيقى ',
-  ARTS: 'ARTS الفنية ',
-  SCIENCE: 'SCIENCE العلوم ',
+  ACTIVITY: 'ACTIVITY حصة النشاط ',
+  MUSIC: 'MUSIC موسيقى ',
+  ARTS: 'ARTS فنية ',
+  SCIENCE: 'SCIENCE علوم ',
   FRENCH: 'FRENCH اللغة الفرنسية  ',
   HEALTH_SCIENCE: 'HEALTH SCIENCE العلوم الصحية  ',
   PHYSICS: 'PHYSICS الفيزياء ',
   BIOLOGY: 'BIOLOGY الاحياء ',
-  CHEMISTRY: 'CHEMISTRY الكيمياء '
+  CHEMISTRY: 'CHEMISTRY كيمياء '
 };
 
 const SUBJECT_CLASS_MAP = {
@@ -587,18 +587,24 @@ let weekStart = mondayOf(new Date());
 let currentClass = ALL_CLASSES[0];
 let currentSubject = subjectsForClass(currentClass)[0];
 
+function toDateStr(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function mondayOf(d){
   const date = new Date(d);
   const day = date.getDay();
   const diff = (day === 0 ? -6 : 1) - day;
   date.setDate(date.getDate() + diff);
   date.setHours(0,0,0,0);
-  return date.toISOString().slice(0,10);
+  return toDateStr(date);
 }
 function addDays(dateStr, n){
   const d = new Date(dateStr + 'T00:00:00');
   d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0,10);
+  return toDateStr(d);
 }
 function weekLabelText(ws){
   const start = new Date(ws + 'T00:00:00');
@@ -745,9 +751,9 @@ async function renderTeacher(app){
         ${DAYS.map(([key,label])=>`
           <div class="day-col">
             <div class="day-name">${label}</div>
-            <span class="field-tag">Topic / focus   عنوان الدرس  </span>
+            <span class="field-tag">Topic / focus   الدروس  </span>
             <textarea data-day="${key}" data-field="topic" dir="auto" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
-            <span class="field-tag">Tasks / Exam   المهام والاختبارات </span>
+            <span class="field-tag">Tasks / Exam   الاختبارات </span>
             <textarea data-day="${key}" data-field="homework" dir="auto" placeholder="Any tasks or exams?">${plan.days[key]?.homework||''}</textarea>
           </div>
         `).join('')}

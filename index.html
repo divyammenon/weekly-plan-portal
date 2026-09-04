@@ -329,22 +329,22 @@ const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
 const MUSIC_ARTS_CLASSES = [...GRADE1_TO_8, '9 GEN', '9 ADV', '10 GEN'];
 const AI_TECH_CLASSES = ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV');
 const SUBJECT_CLASS_MAP = {
-  'ENGLISH': ALL_CLASSES,
-  'ARABIC': ALL_CLASSES,
-  'ISLAMIC': ALL_CLASSES,
-  'MATHEMATICS': ALL_CLASSES,
-  'PE': ALL_CLASSES,
-  'SOCIAL STUDIES': ALL_CLASSES,
+  'ENGLISH انجلش ': ALL_CLASSES,
+  'ARABIC اللغة العربية  ': ALL_CLASSES,
+  'ISLAMIC  إسلامية ': ALL_CLASSES,
+  'MATHEMATICSالرياضيات ': ALL_CLASSES,
+  'PE الرياضة ': ALL_CLASSES,
+  'SOCIAL STUDIES اجتماعيات ': ALL_CLASSES,
   'AI AND TECHNOLOGY': AI_TECH_CLASSES,
-  'ACTIVITY': GRADE1_TO_2,
-  'MUSIC': MUSIC_ARTS_CLASSES,
-  'ARTS': MUSIC_ARTS_CLASSES,
-  'SCIENCE': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
-  'FRENCH': GRADE5_TO_12,
-  'HEALTH SCIENCE': ['11 GEN','12 GEN1','12 ADV'],
-  'PHYSICS': ['9 ADV','10 ADV','11 ADV','12 GEN1','12 ADV'],
-  'BIOLOGY': ['9 ADV','11 GEN','11 ADV','12 GEN1','12 ADV'],
-  'CHEMISTRY': ['10 ADV','11 GEN','11 ADV','12 GEN1','12 ADV']
+  'ACTIVITY حصة النشاط ': GRADE1_TO_2,
+  'MUSIC موسيقى ': MUSIC_ARTS_CLASSES,
+  'ARTS فنية ': MUSIC_ARTS_CLASSES,
+  'SCIENCE علوم ': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
+  'FRENCH اللغة الفرنسية  ': GRADE5_TO_12,
+  'HEALTH SCIENCE العلوم الصحية  ': ['11 GEN','12 GEN1','12 ADV'],
+  'PHYSICS الفيزياء ': ['9 ADV','10 ADV','11 ADV','12 GEN1','12 ADV'],
+  'BIOLOGY الاحياء ': ['9 ADV','11 GEN','11 ADV','12 GEN1','12 ADV'],
+  'CHEMISTRY كيمياء ': ['10 ADV','11 GEN','11 ADV','12 GEN1','12 ADV']
 };
 const SUBJECTS = Object.keys(SUBJECT_CLASS_MAP);
 function subjectsForClass(className){
@@ -705,7 +705,7 @@ async function renderTeacher(app){
     </div>
 
     <div class="card card-gold">
-      <h2>⭐ Star of the Week</h2>
+      <h2>⭐ Star of the Week  نجم الأسبوع </h2>
       <input type="text" id="starOfWeek" dir="auto" value="${plan.starOfWeek?escapeHtml(plan.starOfWeek):''}" placeholder="Type a student's name to celebrate this week">
       <p class="hint">This shows up highlighted with stars before your weekly plan, for admin and students to see.</p>
     </div>
@@ -721,9 +721,9 @@ async function renderTeacher(app){
         ${DAYS.map(([key,label])=>`
           <div class="day-col">
             <div class="day-name">${label}</div>
-            <span class="field-tag">Topic / focus</span>
+            <span class="field-tag">Topic / focus   الدروس  </span>
             <textarea data-day="${key}" data-field="topic" dir="auto" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
-            <span class="field-tag">Tasks / Exam</span>
+            <span class="field-tag">Tasks / Exam   الاختبارات </span>
             <textarea data-day="${key}" data-field="homework" dir="auto" placeholder="Any tasks or exams?">${plan.days[key]?.homework||''}</textarea>
           </div>
         `).join('')}

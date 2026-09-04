@@ -334,22 +334,22 @@ const AI_TECH_CLASSES = ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV'
    instead of retyping the string, so editing the Arabic text here updates
    everywhere at once and can never fall out of sync again. */
 const SUBJ = {
-  ENGLISH: 'ENGLISH انجلش ',
+  ENGLISH: 'ENGLISH اللغة الانجليزية ',
   ARABIC: 'ARABIC اللغة العربية  ',
-  ISLAMIC: 'ISLAMIC  إسلامية ',
+  ISLAMIC: 'ISLAMIC  التربية الاسلامية ',
   MATHEMATICS: 'MATHEMATICSالرياضيات ',
-  PE: 'PE الرياضة ',
-  SOCIAL_STUDIES: 'SOCIAL STUDIES اجتماعيات ',
+  PE: 'PE التربية البدنية والرياضية ',
+  SOCIAL_STUDIES: 'SOCIAL STUDIES الدراسات الاجتماعيات ',
   AI_TECH: 'AI AND TECHNOLOGY',
-  ACTIVITY: 'ACTIVITY حصة النشاط ',
-  MUSIC: 'MUSIC موسيقى ',
-  ARTS: 'ARTS فنية ',
-  SCIENCE: 'SCIENCE علوم ',
+ ACTIVITY: 'ACTIVITY حصة النشاط ',
+  MUSIC: 'MUSIC الموسيقى ',
+  ARTS: 'ARTS الفنية ',
+  SCIENCE: 'SCIENCE العلوم ',
   FRENCH: 'FRENCH اللغة الفرنسية  ',
   HEALTH_SCIENCE: 'HEALTH SCIENCE العلوم الصحية  ',
   PHYSICS: 'PHYSICS الفيزياء ',
   BIOLOGY: 'BIOLOGY الاحياء ',
-  CHEMISTRY: 'CHEMISTRY كيمياء '
+  CHEMISTRY: 'CHEMISTRY الكيمياء '
 };
 
 const SUBJECT_CLASS_MAP = {
@@ -745,9 +745,9 @@ async function renderTeacher(app){
         ${DAYS.map(([key,label])=>`
           <div class="day-col">
             <div class="day-name">${label}</div>
-            <span class="field-tag">Topic / focus   الدروس  </span>
+            <span class="field-tag">Topic / focus   عنوان الدرس  </span>
             <textarea data-day="${key}" data-field="topic" dir="auto" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
-            <span class="field-tag">Tasks / Exam   الاختبارات </span>
+            <span class="field-tag">Tasks / Exam   المهام والاختبارات </span>
             <textarea data-day="${key}" data-field="homework" dir="auto" placeholder="Any tasks or exams?">${plan.days[key]?.homework||''}</textarea>
           </div>
         `).join('')}

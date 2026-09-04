@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Weekly Plan Board</title>
+<title>AL Noaimeyah Girls School — Weekly Plan Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <!-- Firebase (free tier) — provides the shared database so teachers, admin, and
@@ -12,57 +12,79 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <style>
   :root{
-    --ink:#1c2b3a;
-    --paper:#eef2f6;
-    --card:#ffffff;
-    --rail:#c9d3dd;
-    --accent:#e2a33e;      /* chalk-gold */
-    --accent-ink:#7a4e08;
-    --teal:#2f7d6b;        /* chalkboard green */
-    --teal-deep:#1f5346;
-    --coral:#d1573f;       /* missing / alert */
-    --coral-soft:#fbe6e1;
-    --success-soft:#e2f2ea;
-    --shadow: 0 6px 18px rgba(28,43,58,0.08);
+    --ink:#3d2f22;          /* deep espresso brown — text */
+    --paper:#f2e8d5;        /* warm beige — page background */
+    --card:#fffaf0;         /* creamy ivory — cards */
+    --rail:#ddccA6;         /* soft beige border */
+    --accent:#c9a227;       /* gold — stars & highlights */
+    --accent-ink:#7a5c14;
+    --primary:#8a6d3b;      /* bronze/olive — primary buttons */
+    --primary-deep:#6b5228;
+    --coral:#a8452c;        /* rust — missing / alert */
+    --coral-soft:#f2ddd2;
+    --success-soft:#e4e6c9; /* sage-beige — posted status */
+    --success-ink:#55642f;
+    --shadow: 0 6px 18px rgba(61,47,34,0.12);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
     background:
-      radial-gradient(1200px 600px at 10% -10%, #f7f3e9 0%, transparent 60%),
+      radial-gradient(1200px 600px at 10% -10%, #faf3e2 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, #f5e9c9 0%, transparent 55%),
+      repeating-linear-gradient(135deg, rgba(201,162,39,0.05) 0px, rgba(201,162,39,0.05) 2px, transparent 2px, transparent 26px),
       var(--paper);
     color:var(--ink);
     font-family:'Inter',sans-serif;
     min-height:100vh;
     padding:28px 16px 60px;
+    position:relative;
+    overflow-x:hidden;
   }
-  .wrap{max-width:980px;margin:0 auto;}
+  .bg-stickers{
+    position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  }
+  .bg-stickers span{
+    position:absolute;font-size:64px;opacity:.08;filter:grayscale(15%);
+  }
+  .bg-stickers span:nth-child(1){top:4%;left:3%;transform:rotate(-14deg);font-size:70px;}
+  .bg-stickers span:nth-child(2){top:8%;right:4%;transform:rotate(12deg);}
+  .bg-stickers span:nth-child(3){bottom:6%;left:5%;transform:rotate(8deg);font-size:76px;}
+  .bg-stickers span:nth-child(4){bottom:10%;right:6%;transform:rotate(-10deg);}
+  .bg-stickers span:nth-child(5){top:42%;left:1%;transform:rotate(-6deg);font-size:56px;}
+  .bg-stickers span:nth-child(6){top:55%;right:1%;transform:rotate(10deg);font-size:56px;}
+  .wrap{max-width:980px;margin:0 auto;position:relative;z-index:1;}
 
-  /* Header — classroom door sign */
+  /* Header */
   header{
-    display:flex;align-items:flex-end;justify-content:space-between;
-    flex-wrap:wrap;gap:16px;margin-bottom:22px;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    gap:14px;margin-bottom:8px;
   }
-  .brand{display:flex;align-items:center;gap:14px;}
+  .brand{display:flex;flex-direction:column;align-items:center;gap:8px;}
   .brand-mark{
-    width:52px;height:52px;border-radius:14px;
-    background:linear-gradient(155deg,var(--teal),var(--teal-deep));
+    width:62px;height:62px;border-radius:16px;
+    background:linear-gradient(155deg,var(--accent),var(--accent-ink));
     display:flex;align-items:center;justify-content:center;
-    font-size:26px;box-shadow:var(--shadow);flex-shrink:0;
+    font-size:30px;box-shadow:var(--shadow);flex-shrink:0;
   }
   h1{
     font-family:'Baloo 2',sans-serif;font-weight:800;
-    font-size:26px;margin:0;letter-spacing:0.2px;
+    font-size:25px;margin:0;letter-spacing:0.3px;color:var(--ink);
   }
-  .sub{margin:2px 0 0;color:#5b6b7a;font-size:13.5px;}
+  .sub{margin:3px 0 0;color:var(--primary-deep);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+  .sub2{margin:2px 0 0;color:#8a7a63;font-size:12.5px;}
+  .sticker-strip{font-size:19px;letter-spacing:6px;opacity:.75;margin:4px 0 2px;}
 
-  nav.roles{display:flex;gap:8px;background:#dfe6ed;padding:5px;border-radius:12px;}
+  nav.roles{display:flex;gap:8px;background:#e8dcbf;padding:5px;border-radius:12px;margin-bottom:14px;}
   nav.roles button{
     border:none;background:transparent;padding:9px 16px;border-radius:9px;
-    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;color:#5b6b7a;
+    font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;color:#7a6a4f;
     cursor:pointer;transition:.15s;
   }
   nav.roles button.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow);}
+  nav.roles button[data-role="teacher"].active{background:#f6e4ab;color:#7a5c14;}
+  nav.roles button[data-role="admin"].active{background:#f2ddd2;color:#a8452c;}
+  nav.roles button[data-role="student"].active{background:#e0e8c8;color:#4f6b2f;}
 
   /* Week strip */
   .week-bar{
@@ -74,28 +96,32 @@
     background:var(--card);cursor:pointer;font-size:15px;color:var(--ink);
     display:flex;align-items:center;justify-content:center;
   }
-  .week-bar button:hover{border-color:var(--teal);color:var(--teal-deep);}
+  .week-bar button:hover{border-color:var(--primary);color:var(--primary-deep);}
   .week-label{
     font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13.5px;
     background:var(--card);padding:8px 16px;border-radius:999px;box-shadow:var(--shadow);
-    color:var(--teal-deep);
+    color:var(--primary-deep);
   }
 
   .card{
     background:var(--card);border-radius:16px;box-shadow:var(--shadow);
-    padding:22px 24px;margin-bottom:18px;
+    padding:22px 24px;margin-bottom:18px;border:1px solid #f0e6cf;
   }
+  .card-gold{border-left:5px solid var(--accent);}
+  .card-rust{border-left:5px solid var(--coral);}
+  .card-sage{border-left:5px solid #7c8c4a;}
+  .card-primary{border-left:5px solid var(--primary);}
   .card h2{
     font-family:'Baloo 2',sans-serif;font-size:18px;margin:0 0 14px;
-    display:flex;align-items:center;gap:8px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   }
-  label{font-size:12.5px;font-weight:600;color:#5b6b7a;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em;}
+  label{font-size:12.5px;font-weight:600;color:#8a7a63;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em;}
   select,input[type=text],textarea{
     width:100%;border:1.5px solid var(--rail);border-radius:10px;padding:9px 11px;
-    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fafbfc;
+    font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fffdf7;
     resize:vertical;
   }
-  select:focus,input:focus,textarea:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:1px;border-color:var(--primary);}
   .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
   .row>div{flex:1;min-width:160px;}
 
@@ -103,11 +129,21 @@
     font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;
     border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:.15s;
   }
-  .btn-primary{background:var(--teal);color:#fff;}
-  .btn-primary:hover{background:var(--teal-deep);}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-deep);}
   .btn-ghost{background:transparent;color:var(--coral);border:1.5px solid var(--coral-soft);}
   .btn-ghost:hover{background:var(--coral-soft);}
   .btn-sm{padding:6px 12px;font-size:12.5px;}
+
+  /* Star of the Week */
+  .star-banner{
+    background:linear-gradient(90deg,#fbf1cf,#f6e4ab);
+    border:2px solid var(--accent);border-radius:14px;
+    padding:14px 18px;margin-bottom:10px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    font-family:'Baloo 2',sans-serif;font-weight:800;font-size:17px;color:var(--accent-ink);
+    text-align:center;letter-spacing:.02em;line-height:1.5;
+  }
 
   /* Timetable — signature element */
   .timetable{
@@ -115,64 +151,54 @@
     overflow-x:auto;padding-bottom:4px;
   }
   .day-col{
-    background:#fbfcfd;border:1.5px solid var(--rail);border-radius:12px;
+    background:#fdf8ec;border:1.5px solid var(--rail);border-radius:12px;
     padding:12px;min-width:150px;
   }
   .day-col .day-name{
     font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;
-    color:var(--teal-deep);margin-bottom:8px;border-bottom:2px dashed var(--rail);padding-bottom:6px;
+    color:var(--primary-deep);margin-bottom:8px;border-bottom:2px dashed var(--rail);padding-bottom:6px;
   }
   .day-col textarea{min-height:54px;font-size:13px;margin-bottom:8px;}
   .day-col textarea:last-child{margin-bottom:0;}
-  .day-col .field-tag{font-size:10px;color:#8b98a5;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;display:block;}
+  .day-col .field-tag{font-size:10px;color:#8a7a63;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;display:block;}
 
   .status-pill{
     display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;
     font-size:12px;font-weight:600;
   }
-  .status-pill.ok{background:var(--success-soft);color:var(--teal-deep);}
+  .status-pill.ok{background:var(--success-soft);color:var(--success-ink);}
   .status-pill.missing{background:var(--coral-soft);color:var(--coral);}
 
   /* Admin register table */
   table{width:100%;border-collapse:collapse;font-size:13.5px;}
   th{
     text-align:left;font-family:'Baloo 2',sans-serif;font-size:12px;text-transform:uppercase;
-    letter-spacing:.03em;color:#8b98a5;padding:8px 10px;border-bottom:2px solid var(--rail);
+    letter-spacing:.03em;color:#8a7a63;padding:8px 10px;border-bottom:2px solid var(--rail);
   }
-  td{padding:10px;border-bottom:1px solid #eef1f4;vertical-align:middle;}
+  td{padding:10px;border-bottom:1px solid #f0e6cf;vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   .teacher-name{font-weight:600;}
   .class-chip{
-    background:#eef2f6;border-radius:6px;padding:2px 8px;font-size:12px;color:#5b6b7a;
+    background:#f2e8d5;border-radius:6px;padding:2px 8px;font-size:12px;color:#7a6a4f;
     font-family:'JetBrains Mono',monospace;
   }
 
-  .roster-item{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:9px 12px;background:#fbfcfd;border:1.5px solid var(--rail);border-radius:10px;margin-bottom:8px;
-  }
   .class-block{
-    border:1.5px solid var(--rail);border-radius:12px;padding:12px 16px;margin-bottom:10px;
+    border:1.5px solid var(--rail);border-radius:12px;padding:12px 16px;margin-bottom:10px;background:#fffdf7;
   }
   .class-block summary{
     cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;
     font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;list-style:none;
   }
   .class-block summary::-webkit-details-marker{display:none;}
-  .class-block summary::before{content:'▸';color:#8b98a5;margin-right:6px;transition:.15s;}
+  .class-block summary::before{content:'▸';color:#8a7a63;margin-right:6px;transition:.15s;}
   .class-block[open] summary::before{transform:rotate(90deg);display:inline-block;}
   .class-block table{margin-top:12px;}
   .empty{
-    text-align:center;padding:40px 20px;color:#8b98a5;font-size:14px;
+    text-align:center;padding:40px 20px;color:#9a8a70;font-size:14px;
   }
   .empty .big{font-size:34px;display:block;margin-bottom:8px;}
 
-  .plan-view h3{font-family:'Baloo 2',sans-serif;font-size:16px;margin:18px 0 8px;color:var(--teal-deep);}
-  .plan-view p{margin:0 0 10px;line-height:1.5;font-size:14px;}
-  .objectives{
-    background:#f7f3e9;border-left:4px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;
-    font-size:13.5px;margin-bottom:14px;
-  }
   .toast{
     position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
     background:var(--ink);color:#fff;padding:11px 20px;border-radius:10px;font-size:13.5px;
@@ -180,9 +206,8 @@
     opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
-  .hint{font-size:12px;color:#8b98a5;margin-top:6px;}
+  .hint{font-size:12px;color:#9a8a70;margin-top:6px;}
   @media(max-width:640px){
-    header{flex-direction:column;align-items:flex-start;}
     nav.roles{width:100%;}
     nav.roles button{flex:1;}
   }
@@ -190,27 +215,52 @@
   /* Printing — hidden on screen, shown only in the print dialog */
   #printArea{display:none;}
   @media print{
+    body{background:#fff;}
     body > *:not(#printArea){display:none !important;}
     #printArea{display:block !important;}
-    #printArea h1{font-family:'Baloo 2',sans-serif;font-size:20px;margin:0 0 2px;}
-    #printArea .print-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:#555;margin:0 0 14px;}
-    .print-table{width:100%;border-collapse:collapse;font-size:11px;}
-    .print-table th,.print-table td{border:1px solid #999;padding:6px 7px;text-align:left;vertical-align:top;}
-    .print-table th{background:#eee;font-family:'Baloo 2',sans-serif;}
+    .print-header{text-align:center;border-bottom:3px solid #c9a227;padding-bottom:8px;margin-bottom:12px;}
+    .print-header h1{font-family:'Baloo 2',sans-serif;font-size:19px;margin:0;letter-spacing:.03em;color:#3d2f22;}
+    .print-header .print-cycle{font-family:'JetBrains Mono',monospace;font-size:11px;color:#7a6a4f;margin:2px 0 0;letter-spacing:.08em;}
+    .print-class-title{font-family:'Baloo 2',sans-serif;font-size:16px;margin:0 0 2px;color:#3d2f22;}
+    .print-sub{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#6b5b45;margin:0 0 12px;}
+    .print-table{width:100%;border-collapse:collapse;font-size:10.5px;table-layout:fixed;}
+    .print-table th,.print-table td{border:1px solid #b8a878;padding:6px 7px;text-align:left;vertical-align:top;word-wrap:break-word;}
+    .print-table th{background:#f2e8d5;font-family:'Baloo 2',sans-serif;color:#3d2f22;}
     .print-table tr{page-break-inside:avoid;}
     .print-empty{color:#999;text-align:center;}
-    .print-teacher{font-weight:400;color:#555;font-size:10px;}
+    .print-teacher{font-weight:400;color:#7a6a4f;font-size:9.5px;text-transform:uppercase;letter-spacing:.02em;}
+    .print-star{font-weight:400;color:#7a5c14;font-size:9px;}
+    .print-star-box{
+      text-align:center;background:#fbf1cf;border:2px solid #c9a227;border-radius:10px;
+      padding:10px 14px;margin:0 0 14px;
+    }
+    .print-star-title{font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:800;color:#7a5c14;letter-spacing:.05em;margin-bottom:4px;text-align:center;}
+    .print-star-line{font-family:'Baloo 2',sans-serif;font-size:13px;color:#5c4a1a;margin:2px 0;}
+    .print-star-columns{display:flex;align-items:stretch;justify-content:center;gap:12px;margin-top:6px;}
+    .print-star-col{flex:1;text-align:center;}
+    .print-star-divider{
+      display:flex;align-items:center;justify-content:center;
+      width:2px;background:#c9a227;position:relative;
+    }
+    .print-star-divider span{
+      position:absolute;background:#fbf1cf;font-size:17px;padding:2px 0;
+    }
   }
 </style>
 </head>
 <body>
+<div class="bg-stickers" aria-hidden="true">
+  <span>📚</span><span>🎨</span><span>✏️</span><span>🌟</span><span>🔬</span><span>🎒</span>
+</div>
 <div class="wrap">
   <header>
     <div class="brand">
-      <div class="brand-mark">🗓️</div>
+      <div class="brand-mark">🏫</div>
       <div>
-        <h1>Weekly Plan Board</h1>
-        <p class="sub">One board, three views — teachers post it, admin tracks it, students read it.</p>
+        <h1>AL NOAIMEYAH GIRLS SCHOOL</h1>
+        <p class="sub">CYCLE 1 &nbsp;•&nbsp; CYCLE 2 &nbsp;•&nbsp; CYCLE 3</p>
+        <p class="sub2">Weekly Plan Board — teachers post it, admin tracks it, students read it.</p>
+        <p class="sticker-strip">📚 ✏️ 🎨 🔬 🎵 ⚽ 🌍 🤖</p>
       </div>
     </div>
     <nav class="roles">
@@ -250,7 +300,7 @@ const db = firebase.firestore();
 
 const DAYS = [['mon','Mon'],['tue','Tue'],['wed','Wed'],['thu','Thu'],['fri','Fri']];
 const CLASS_STRUCTURE = [
-  {grade:'Grade 1', classes:['1-1','1-2','1-3']},
+  {grade:'Grade 1', classes:['1-1','1-2']},
   {grade:'Grade 2', classes:['2-1','2-2','2-3']},
   {grade:'Grade 3', classes:['3-1','3-2']},
   {grade:'Grade 4', classes:['4-1','4-2']},
@@ -260,8 +310,8 @@ const CLASS_STRUCTURE = [
   {grade:'Grade 8', classes:['Grade 8']},
   {grade:'Grade 9', classes:['9 GEN','9 ADV']},
   {grade:'Grade 10', classes:['10 GEN','10 ADV']},
-  {grade:'Grade 11', classes:['11 GEN1','11 GEN2','11 ADV']},
-  {grade:'Grade 12', classes:['12 GEN1','12 GEN2','12 ADV']}
+  {grade:'Grade 11', classes:['11 GEN','11 ADV']},
+  {grade:'Grade 12', classes:['12 GEN1','12 ADV']}
 ];
 function classOptionsHtml(){
   return CLASS_STRUCTURE.map(g=>`
@@ -271,29 +321,240 @@ function classOptionsHtml(){
   `).join('');
 }
 const ALL_CLASSES = CLASS_STRUCTURE.flatMap(g=>g.classes);
-const GRADE1_TO_10 = CLASS_STRUCTURE.slice(0,10).flatMap(g=>g.classes);
 const GRADE1_TO_8 = CLASS_STRUCTURE.slice(0,8).flatMap(g=>g.classes);
+const GRADE1_TO_2 = CLASS_STRUCTURE.slice(0,2).flatMap(g=>g.classes);
 const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
+/* Music/Arts and AI & Technology don't run in every class — built from the
+   actual staffing list rather than a blanket "all classes" rule. */
+const MUSIC_ARTS_CLASSES = [...GRADE1_TO_8, '9 GEN', '9 ADV', '10 GEN'];
+const AI_TECH_CLASSES = ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV');
 const SUBJECT_CLASS_MAP = {
-  'ENGLISH اللغة الانجليزية': ALL_CLASSES,
-  'ARABIC اللغة العربية': ALL_CLASSES,
-  'ISLAMIC التربية الإسلامية': ALL_CLASSES,
-  'MATHEMATICSالرياضيات': ALL_CLASSES,
-  'PE التربية البدنية': ALL_CLASSES,
-  'AI AND TECHNOLOGY': ALL_CLASSES,
-  'MUSICالموسيقى': GRADE1_TO_10,
-  'ARTSالفنون البصرية': GRADE1_TO_10,
-  'SCIENCE العلوم': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
-  'FRENCHاللغة الفرنسية': GRADE5_TO_12,
-  'HEALTH SCIENCE العلوم الصحية': ['11 GEN1','11 ADV','12 GEN1','12 GEN2','12 ADV'],
-  'PHYSICSالفيزياء': ['9 ADV','10 ADV','11 ADV','12 GEN2','12 ADV'],
-  'BIOLOGYالأحياء': ['9 ADV','11 GEN1','12 GEN1','12 GEN2','12 ADV'],
-  'CHEMISTRY الكيمياء': ['10 ADV','11 GEN1','11 ADV','12 GEN1']
+  'ENGLISH': ALL_CLASSES,
+  'ARABIC': ALL_CLASSES,
+  'ISLAMIC': ALL_CLASSES,
+  'MATHEMATICS': ALL_CLASSES,
+  'PE': ALL_CLASSES,
+  'SOCIAL STUDIES': ALL_CLASSES,
+  'AI AND TECHNOLOGY': AI_TECH_CLASSES,
+  'ACTIVITY': GRADE1_TO_2,
+  'MUSIC': MUSIC_ARTS_CLASSES,
+  'ARTS': MUSIC_ARTS_CLASSES,
+  'SCIENCE': [...GRADE1_TO_8, '9 GEN', '10 GEN'],
+  'FRENCH': GRADE5_TO_12,
+  'HEALTH SCIENCE': ['11 GEN','12 GEN1','12 ADV'],
+  'PHYSICS': ['9 ADV','10 ADV','11 ADV','12 GEN1','12 ADV'],
+  'BIOLOGY': ['9 ADV','11 GEN','11 ADV','12 GEN1','12 ADV'],
+  'CHEMISTRY': ['10 ADV','11 GEN','11 ADV','12 GEN1','12 ADV']
 };
 const SUBJECTS = Object.keys(SUBJECT_CLASS_MAP);
 function subjectsForClass(className){
   return SUBJECTS.filter(s=>SUBJECT_CLASS_MAP[s].includes(className));
 }
+/* Suggested teacher name per class+subject — auto-fills the "Your name" box
+   on the teacher form (teachers can still overwrite it). Add more with
+   setTeacher(['class-id', ...], 'SUBJECT', 'Name'). */
+const TEACHER_DIRECTORY = {};
+function setTeacher(classes, subject, name){
+  if(!name) return;
+  classes.forEach(c=>{ TEACHER_DIRECTORY[planEntryKey(c, subject)] = name; });
+}
+setTeacher(['1-1','1-2'], 'ISLAMIC', 'Jamila');
+setTeacher(['1-1','1-2'], 'MATHEMATICS', 'Nahla');
+setTeacher(['1-1','1-2'], 'SCIENCE', 'Nahla');
+setTeacher(['1-1','1-2'], 'ENGLISH', 'SOMYAH');
+setTeacher(['1-1','1-2'], 'ARABIC', 'Jamila');
+setTeacher(['1-1','1-2'], 'PE', 'Yasmina');
+setTeacher(['1-1','1-2'], 'AI AND TECHNOLOGY', 'Nadiya');
+setTeacher(['1-1','1-2'], 'MUSIC', 'anan');
+setTeacher(['1-1','1-2'], 'ARTS', 'heba');
+setTeacher(['1-1','1-2'], 'SOCIAL STUDIES', 'eman');
+setTeacher(GRADE1_TO_2, 'ACTIVITY', 'Mona A');
+
+setTeacher(['2-1','2-2'], 'ISLAMIC', 'Eman');
+setTeacher(['2-1','2-2'], 'MATHEMATICS', 'Mona A');
+setTeacher(['2-1','2-2'], 'SCIENCE', 'Mona A');
+setTeacher(['2-1','2-2'], 'ENGLISH', 'Nassra');
+setTeacher(['2-1','2-2'], 'ARABIC', 'Hamda');
+setTeacher(['2-1','2-2'], 'PE', 'Yasmina');
+setTeacher(['2-1','2-2'], 'AI AND TECHNOLOGY', 'Nadiya');
+setTeacher(['2-1','2-2'], 'MUSIC', 'anan');
+setTeacher(['2-1','2-2'], 'ARTS', 'heba');
+setTeacher(['2-1','2-2'], 'SOCIAL STUDIES', 'Moza H');
+
+setTeacher(['2-3'], 'ISLAMIC', 'Eman');
+setTeacher(['2-3'], 'MATHEMATICS', 'Aysha A.');
+setTeacher(['2-3'], 'SCIENCE', 'Laila M.');
+setTeacher(['2-3'], 'ENGLISH', 'Nassra');
+setTeacher(['2-3'], 'ARABIC', 'Hamda');
+setTeacher(['2-3'], 'PE', 'Yasmina');
+setTeacher(['2-3'], 'AI AND TECHNOLOGY', 'Nadiya');
+setTeacher(['2-3'], 'MUSIC', 'anan');
+setTeacher(['2-3'], 'ARTS', 'heba');
+setTeacher(['2-3'], 'SOCIAL STUDIES', 'Moza H');
+
+setTeacher(['3-1','3-2'], 'ISLAMIC', 'Aishah');
+setTeacher(['3-1','3-2'], 'MATHEMATICS', 'SAMIRA');
+setTeacher(['3-1','3-2'], 'SCIENCE', 'Laila M.');
+setTeacher(['3-1','3-2'], 'ENGLISH', 'somyah');
+setTeacher(['3-1','3-2'], 'ARABIC', 'mariam M.');
+setTeacher(['3-1','3-2'], 'PE', 'Hayam');
+setTeacher(['3-1','3-2'], 'AI AND TECHNOLOGY', 'nadiya');
+setTeacher(['3-1','3-2'], 'MUSIC', 'anan');
+setTeacher(['3-1','3-2'], 'ARTS', 'heba');
+setTeacher(['3-1','3-2'], 'SOCIAL STUDIES', 'Moza H');
+
+setTeacher(['4-1','4-2'], 'ISLAMIC', 'Aishah');
+setTeacher(['4-1','4-2'], 'MATHEMATICS', 'AYSHA A.');
+setTeacher(['4-1','4-2'], 'SCIENCE', 'Shekha S.');
+setTeacher(['4-1','4-2'], 'ENGLISH', 'Nassra');
+setTeacher(['4-1','4-2'], 'ARABIC', 'mariam M.');
+setTeacher(['4-1','4-2'], 'PE', 'Hayam');
+setTeacher(['4-1','4-2'], 'AI AND TECHNOLOGY', 'nadiya');
+setTeacher(['4-1','4-2'], 'MUSIC', 'anan');
+setTeacher(['4-1','4-2'], 'ARTS', 'heba');
+setTeacher(['4-1','4-2'], 'SOCIAL STUDIES', 'Moza H');
+
+setTeacher(['Grade 5'], 'ISLAMIC', 'Aishah');
+setTeacher(['Grade 5'], 'MATHEMATICS', 'Laila S.');
+setTeacher(['Grade 5'], 'SCIENCE', 'Shekha S.');
+setTeacher(['Grade 5'], 'ENGLISH', 'Somyah');
+setTeacher(['Grade 5'], 'ARABIC', 'MITHA');
+setTeacher(['Grade 5'], 'PE', 'Hayam');
+setTeacher(['Grade 5'], 'AI AND TECHNOLOGY', 'nadiya');
+setTeacher(['Grade 5'], 'MUSIC', 'anan');
+setTeacher(['Grade 5'], 'ARTS', 'heba');
+setTeacher(['Grade 5'], 'SOCIAL STUDIES', 'Moza H');
+setTeacher(['Grade 5'], 'FRENCH', 'Soukina');
+
+setTeacher(['Grade 6'], 'ISLAMIC', 'Aishah');
+setTeacher(['Grade 6'], 'MATHEMATICS', 'Laila S.');
+setTeacher(['Grade 6'], 'SCIENCE', 'Laila M.');
+setTeacher(['Grade 6'], 'ENGLISH', 'Mona M');
+setTeacher(['Grade 6'], 'ARABIC', 'Almuna');
+setTeacher(['Grade 6'], 'PE', 'YASMINA');
+setTeacher(['Grade 6'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['Grade 6'], 'MUSIC', 'anan');
+setTeacher(['Grade 6'], 'ARTS', 'heba');
+setTeacher(['Grade 6'], 'SOCIAL STUDIES', 'Moza A');
+setTeacher(['Grade 6'], 'FRENCH', 'Soukina');
+
+setTeacher(['7-1','7-2'], 'ISLAMIC', 'Aishah');
+setTeacher(['7-1','7-2'], 'MATHEMATICS', 'Safa');
+setTeacher(['7-1','7-2'], 'SCIENCE', 'Shaikha R');
+setTeacher(['7-1','7-2'], 'ENGLISH', 'Mona M');
+setTeacher(['7-1','7-2'], 'ARABIC', 'Mitha');
+setTeacher(['7-1','7-2'], 'PE', 'Hayam');
+setTeacher(['7-1','7-2'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['7-1','7-2'], 'MUSIC', 'anan');
+setTeacher(['7-1','7-2'], 'ARTS', 'heba');
+setTeacher(['7-1','7-2'], 'SOCIAL STUDIES', 'Moza A');
+setTeacher(['7-1','7-2'], 'FRENCH', 'Soukina');
+
+setTeacher(['Grade 8'], 'ISLAMIC', 'Hamama');
+setTeacher(['Grade 8'], 'MATHEMATICS', 'Hessa');
+setTeacher(['Grade 8'], 'SCIENCE', 'Shaikha S');
+setTeacher(['Grade 8'], 'ENGLISH', 'Mona M');
+setTeacher(['Grade 8'], 'ARABIC', 'Mitha');
+setTeacher(['Grade 8'], 'PE', 'Yasmina');
+setTeacher(['Grade 8'], 'AI AND TECHNOLOGY', 'Nadiya');
+setTeacher(['Grade 8'], 'MUSIC', 'anan');
+setTeacher(['Grade 8'], 'ARTS', 'heba');
+setTeacher(['Grade 8'], 'SOCIAL STUDIES', 'Salama S.');
+setTeacher(['Grade 8'], 'FRENCH', 'Soukina');
+
+setTeacher(['9 GEN'], 'ISLAMIC', 'Hamama');
+setTeacher(['9 GEN'], 'MATHEMATICS', 'Safa');
+setTeacher(['9 GEN'], 'SCIENCE', 'Shaikha R.');
+setTeacher(['9 GEN'], 'ENGLISH', 'Sumaira');
+setTeacher(['9 GEN'], 'ARABIC', 'Almuna');
+setTeacher(['9 GEN'], 'PE', 'Yasmina');
+setTeacher(['9 GEN'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['9 GEN'], 'MUSIC', 'anan');
+setTeacher(['9 GEN'], 'ARTS', 'heba');
+setTeacher(['9 GEN'], 'SOCIAL STUDIES', 'Moza A.');
+setTeacher(['9 GEN'], 'FRENCH', 'Soukina');
+
+setTeacher(['9 ADV'], 'ISLAMIC', 'Hamama');
+setTeacher(['9 ADV'], 'MATHEMATICS', 'Laila S');
+setTeacher(['9 ADV'], 'BIOLOGY', 'Amira');
+setTeacher(['9 ADV'], 'ENGLISH', 'Sumaira');
+setTeacher(['9 ADV'], 'ARABIC', 'Almuna');
+setTeacher(['9 ADV'], 'PE', 'Yasmina');
+setTeacher(['9 ADV'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['9 ADV'], 'MUSIC', 'anan');
+setTeacher(['9 ADV'], 'ARTS', 'heba');
+setTeacher(['9 ADV'], 'SOCIAL STUDIES', 'Moza A.');
+setTeacher(['9 ADV'], 'FRENCH', 'Soukina');
+setTeacher(['9 ADV'], 'PHYSICS', 'Noor');
+
+setTeacher(['10 GEN'], 'ISLAMIC', 'Hamama');
+setTeacher(['10 GEN'], 'MATHEMATICS', 'Samira');
+setTeacher(['10 GEN'], 'SCIENCE', 'Rawand');
+setTeacher(['10 GEN'], 'ENGLISH', 'Sumaira');
+setTeacher(['10 GEN'], 'ARABIC', 'Moza M.');
+setTeacher(['10 GEN'], 'PE', 'Hayam');
+setTeacher(['10 GEN'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['10 GEN'], 'MUSIC', 'anan');
+setTeacher(['10 GEN'], 'ARTS', 'heba');
+setTeacher(['10 GEN'], 'SOCIAL STUDIES', 'Salama S.');
+setTeacher(['10 GEN'], 'FRENCH', 'Soukina');
+
+setTeacher(['10 ADV'], 'ISLAMIC', 'Hamama');
+setTeacher(['10 ADV'], 'MATHEMATICS', 'Wajeha');
+setTeacher(['10 ADV'], 'CHEMISTRY', 'Rawand');
+setTeacher(['10 ADV'], 'ENGLISH', 'Sumaira');
+setTeacher(['10 ADV'], 'ARABIC', 'Moza M.');
+setTeacher(['10 ADV'], 'PE', 'Hayam');
+setTeacher(['10 ADV'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['10 ADV'], 'SOCIAL STUDIES', 'Salama S');
+setTeacher(['10 ADV'], 'FRENCH', 'Soukina');
+setTeacher(['10 ADV'], 'PHYSICS', 'Noor');
+
+setTeacher(['11 GEN'], 'ISLAMIC', 'Hamama');
+setTeacher(['11 GEN'], 'MATHEMATICS', 'Hessa');
+setTeacher(['11 GEN'], 'CHEMISTRY', 'Shaikha R');
+setTeacher(['11 GEN'], 'ENGLISH', 'Bhawna');
+setTeacher(['11 GEN'], 'ARABIC', 'Almuna');
+setTeacher(['11 GEN'], 'PE', 'Hayam');
+setTeacher(['11 GEN'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['11 GEN'], 'SOCIAL STUDIES', 'Salama S.');
+setTeacher(['11 GEN'], 'FRENCH', 'Soukina');
+setTeacher(['11 GEN'], 'HEALTH SCIENCE', 'Amira');
+
+setTeacher(['11 ADV'], 'ISLAMIC', 'Hamama');
+setTeacher(['11 ADV'], 'MATHEMATICS', 'Wajeha');
+setTeacher(['11 ADV'], 'CHEMISTRY', 'Rawand');
+setTeacher(['11 ADV'], 'ENGLISH', 'Bhawna');
+setTeacher(['11 ADV'], 'ARABIC', 'Almuna');
+setTeacher(['11 ADV'], 'PE', 'Hayam');
+setTeacher(['11 ADV'], 'SOCIAL STUDIES', 'Salama S');
+setTeacher(['11 ADV'], 'FRENCH', 'Soukina');
+setTeacher(['11 ADV'], 'PHYSICS', 'Noor');
+setTeacher(['11 ADV'], 'BIOLOGY', 'Amira');
+
+setTeacher(['12 GEN1'], 'ISLAMIC', 'Hamama');
+setTeacher(['12 GEN1'], 'MATHEMATICS', 'Hessa');
+setTeacher(['12 GEN1'], 'CHEMISTRY', 'Shaikha R');
+setTeacher(['12 GEN1'], 'ENGLISH', 'Bhawna');
+setTeacher(['12 GEN1'], 'ARABIC', 'Moza M');
+setTeacher(['12 GEN1'], 'PE', 'Yasmina');
+setTeacher(['12 GEN1'], 'AI AND TECHNOLOGY', 'Divya');
+setTeacher(['12 GEN1'], 'SOCIAL STUDIES', 'Salama S.');
+setTeacher(['12 GEN1'], 'FRENCH', 'Soukina');
+setTeacher(['12 GEN1'], 'HEALTH SCIENCE', 'Amira');
+setTeacher(['12 GEN1'], 'PHYSICS', 'Mohammed');
+
+setTeacher(['12 ADV'], 'ISLAMIC', 'Hamama');
+setTeacher(['12 ADV'], 'MATHEMATICS', 'Hessa');
+setTeacher(['12 ADV'], 'CHEMISTRY', 'Shaikha R');
+setTeacher(['12 ADV'], 'ENGLISH', 'Bhawna');
+setTeacher(['12 ADV'], 'ARABIC', 'Moza M');
+setTeacher(['12 ADV'], 'PE', 'Yasmina');
+setTeacher(['12 ADV'], 'SOCIAL STUDIES', 'Salama S.');
+setTeacher(['12 ADV'], 'FRENCH', 'Soukina');
+setTeacher(['12 ADV'], 'HEALTH SCIENCE', 'Amira');
+setTeacher(['12 ADV'], 'BIOLOGY', 'Amira');
+setTeacher(['12 ADV'], 'PHYSICS', 'Noor');
 function subjectOptionsHtml(className){
   return subjectsForClass(className).map(s=>`<option value="${s}">${s}</option>`).join('');
 }
@@ -330,19 +591,49 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'), 2200);
 }
 function slug(str){ return str.replace(/\s+/g,'_').toUpperCase(); }
-function planKey(className, subject, ws){ return `plan:${slug(className)}:${slug(subject)}:${ws}`; }
+function planEntryKey(className, subject){ return `${slug(className)}__${slug(subject)}`; }
+function legacyPlanKey(className, subject, ws){ return `plan:${slug(className)}:${slug(subject)}:${ws}`; }
 function emptyPlan(){
-  return { teacherName:'', days:{mon:{topic:'',homework:''},tue:{topic:'',homework:''},wed:{topic:'',homework:''},thu:{topic:'',homework:''},fri:{topic:'',homework:''}}, submittedAt:null };
+  return { teacherName:'', starOfWeek:'', days:{mon:{topic:'',homework:''},tue:{topic:'',homework:''},wed:{topic:'',homework:''},thu:{topic:'',homework:''},fri:{topic:'',homework:''}}, submittedAt:null };
 }
 
-async function loadPlan(className, subject, ws){
+/* All of one week's plans live in a single Firestore document
+   (one field per class+subject) instead of one document each —
+   this turns ~130 reads into 1 for the admin dashboard, and lets
+   switching class/subject on the teacher & student screens read
+   from an in-memory cache instead of hitting the network again. */
+let weekPlansCache = null;
+let weekPlansCacheWeek = null;
+async function loadWeekPlans(ws){
+  if(weekPlansCacheWeek === ws && weekPlansCache) return weekPlansCache;
   try{
-    const doc = await db.collection('plans').doc(planKey(className, subject, ws)).get();
-    return doc.exists ? doc.data() : null;
-  }catch(e){ console.error('loadPlan failed:', e); return null; }
+    const doc = await db.collection('plans').doc(ws).get();
+    weekPlansCache = doc.exists ? doc.data() : {};
+  }catch(e){ console.error('loadWeekPlans failed:', e); weekPlansCache = {}; }
+  weekPlansCacheWeek = ws;
+  return weekPlansCache;
+}
+async function loadPlan(className, subject, ws){
+  const key = planEntryKey(className, subject);
+  const weekPlans = await loadWeekPlans(ws);
+  if(weekPlans[key]) return weekPlans[key];
+  /* Fallback for plans posted before this update, stored one-per-document.
+     If found, migrate it into the fast per-week document for next time. */
+  try{
+    const legacyDoc = await db.collection('plans').doc(legacyPlanKey(className, subject, ws)).get();
+    if(legacyDoc.exists){
+      const data = legacyDoc.data();
+      weekPlans[key] = data;
+      db.collection('plans').doc(ws).set({[key]: data}, {merge:true}).catch(()=>{});
+      return data;
+    }
+  }catch(e){ /* no legacy plan either — genuinely nothing posted yet */ }
+  return null;
 }
 async function savePlan(className, subject, ws, plan){
-  await db.collection('plans').doc(planKey(className, subject, ws)).set(plan);
+  const key = planEntryKey(className, subject);
+  await db.collection('plans').doc(ws).set({[key]: plan}, {merge:true});
+  if(weekPlansCacheWeek === ws && weekPlansCache) weekPlansCache[key] = plan;
 }
 async function loadSettings(){
   try{
@@ -367,7 +658,7 @@ function render(){
 async function renderTeacher(app){
   if(!teacherUnlocked){
     app.innerHTML = `
-      <div class="card">
+      <div class="card card-rust">
         <h2>🔒 Teacher access</h2>
         <p class="hint" style="margin-bottom:12px;">Enter the teacher PIN to post or edit a weekly plan. Ask your admin if you don't have it.</p>
         <div class="row">
@@ -393,10 +684,12 @@ async function renderTeacher(app){
   if(!subjectsForClass(currentClass).includes(currentSubject)){
     currentSubject = subjectsForClass(currentClass)[0];
   }
+  app.innerHTML = `<div class="card empty"><span class="big">⏳</span>Loading…</div>`;
   const plan = (await loadPlan(currentClass, currentSubject, weekStart)) || emptyPlan();
+  const assignedTeacher = TEACHER_DIRECTORY[planEntryKey(currentClass, currentSubject)] || null;
 
   app.innerHTML = `
-    <div class="card">
+    <div class="card card-primary">
       <h2>🗓️ Select your class & subject</h2>
       <div class="row">
         <div>
@@ -410,19 +703,27 @@ async function renderTeacher(app){
       </div>
     </div>
 
+    <div class="card card-gold">
+      <h2>⭐ Star of the Week</h2>
+      <input type="text" id="starOfWeek" dir="auto" value="${plan.starOfWeek?escapeHtml(plan.starOfWeek):''}" placeholder="Type a student's name to celebrate this week">
+      <p class="hint">This shows up highlighted with stars before your weekly plan, for admin and students to see.</p>
+    </div>
+
     <div class="card">
       <h2>🗓️ ${currentClass} — ${currentSubject} — Weekly Plan <span class="status-pill ${plan.submittedAt?'ok':'missing'}">${plan.submittedAt?'Posted':'Not posted yet'}</span></h2>
       <div class="row">
-        <div><label>Your name (optional)</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="e.g. Ms. Divya"></div>
+        ${assignedTeacher
+          ? `<div><label>Teacher</label><p style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:16px;color:var(--primary-deep);margin:0;text-transform:uppercase;letter-spacing:.03em;">🧑‍🏫 ${escapeHtml(assignedTeacher)}</p></div>`
+          : `<div><label>Your name</label><input type="text" id="teacherName" value="${plan.teacherName?escapeHtml(plan.teacherName):''}" placeholder="No teacher on file yet — type your name"></div>`}
       </div>
       <div class="timetable">
         ${DAYS.map(([key,label])=>`
           <div class="day-col">
             <div class="day-name">${label}</div>
             <span class="field-tag">Topic / focus</span>
-            <textarea data-day="${key}" data-field="topic" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
-            <span class="field-tag">Homework / notes</span>
-            <textarea data-day="${key}" data-field="homework" placeholder="Anything to send home?">${plan.days[key]?.homework||''}</textarea>
+            <textarea data-day="${key}" data-field="topic" dir="auto" placeholder="What's the lesson?">${plan.days[key]?.topic||''}</textarea>
+            <span class="field-tag">Tasks / Exam</span>
+            <textarea data-day="${key}" data-field="homework" dir="auto" placeholder="Any tasks or exams?">${plan.days[key]?.homework||''}</textarea>
           </div>
         `).join('')}
       </div>
@@ -441,7 +742,8 @@ async function renderTeacher(app){
   document.getElementById('subjectSelect').onchange = (e)=>{ currentSubject = e.target.value; render(); };
   document.getElementById('postPlan').onclick = async ()=>{
     const newPlan = emptyPlan();
-    newPlan.teacherName = document.getElementById('teacherName').value.trim();
+    newPlan.teacherName = assignedTeacher || document.getElementById('teacherName').value.trim();
+    newPlan.starOfWeek = document.getElementById('starOfWeek').value.trim();
     document.querySelectorAll('.day-col textarea[data-day]').forEach(ta=>{
       const day = ta.dataset.day, field = ta.dataset.field;
       newPlan.days[day][field] = ta.value.trim();
@@ -462,6 +764,7 @@ async function buildConsolidated(){
   }));
 }
 async function renderAdmin(app){
+  app.innerHTML = `<div class="card empty"><span class="big">⏳</span>Loading dashboard…</div>`;
   const settings = await loadSettings();
   const rows = await buildConsolidated();
   const byClass = Object.fromEntries(rows.map(r=>[r.cls, r]));
@@ -470,7 +773,7 @@ async function renderAdmin(app){
   const missing = totalSubs - totalPosted;
 
   app.innerHTML = `
-    <div class="card">
+    <div class="card card-rust">
       <h2>🔐 Teacher access PIN</h2>
       <p class="hint" style="margin-bottom:12px;">Teachers need this PIN before they can post or edit a weekly plan. Share it only with your teaching staff.</p>
       <div class="row">
@@ -478,14 +781,15 @@ async function renderAdmin(app){
         <div style="flex:0 0 auto;"><button class="btn btn-primary" id="savePin">Save PIN</button></div>
       </div>
     </div>
-    <div class="card">
+    <div class="card card-sage">
       <h2>📋 Consolidated view — week of ${weekLabelText(weekStart)}
         ${missing>0 ? `<span class="status-pill missing">${missing} missing</span>` : `<span class="status-pill ok">All posted 🎉</span>`}
       </h2>
-      <p class="hint">${totalPosted} of ${totalSubs} class-subject plans posted this week. Click a class to see the subject breakdown.</p>
+      <p class="hint" style="margin-bottom:12px;">${totalPosted} of ${totalSubs} class-subject plans posted this week. Click a class to see the subject breakdown.</p>
+      <button class="btn btn-primary" id="printIncomplete">🚨 Print Incomplete Entries</button>
     </div>
     ${CLASS_STRUCTURE.map(g=>`
-      <div class="card">
+      <div class="card card-gold">
         <h2>${g.grade}</h2>
         ${g.classes.map(cls=>{
           const row = byClass[cls];
@@ -502,15 +806,17 @@ async function renderAdmin(app){
               </span>
             </summary>
             <table>
-              <thead><tr><th>Subject</th><th>Status</th><th>Teacher</th><th></th></tr></thead>
+              <thead><tr><th>Subject</th><th>Status</th><th>Teacher</th><th>Star of the Week</th><th></th></tr></thead>
               <tbody>
                 ${row.subs.map((s,i)=>{
                   const p = row.plans[i];
                   const done = p && p.submittedAt;
+                  const teacherLabel = TEACHER_DIRECTORY[planEntryKey(cls, s)] || (done && p.teacherName ? p.teacherName : null);
                   return `<tr>
                     <td>${s}</td>
                     <td>${done ? '<span class="status-pill ok">✓ Posted</span>' : '<span class="status-pill missing">✕ Missing</span>'}</td>
-                    <td>${done && p.teacherName ? escapeHtml(p.teacherName) : '—'}</td>
+                    <td>${teacherLabel ? `<span style="text-transform:uppercase;">${escapeHtml(teacherLabel)}</span>` : '—'}</td>
+                    <td>${done && p.starOfWeek ? '⭐ ' + escapeHtml(p.starOfWeek) : '—'}</td>
                     <td>${done ? `<button class="btn btn-ghost btn-sm" data-view-class="${cls}" data-view-subject="${s}">View</button>` : ''}</td>
                   </tr>`;
                 }).join('')}
@@ -523,6 +829,13 @@ async function renderAdmin(app){
     <div class="card" id="planDetail" style="display:none;"></div>
   `;
 
+  document.getElementById('savePin').onclick = async ()=>{
+    const newPin = document.getElementById('pinField').value.trim();
+    if(!newPin){ toast('Enter a PIN first'); return; }
+    await saveSettings({...settings, teacherPin:newPin});
+    toast('Teacher PIN updated');
+  };
+  document.getElementById('printIncomplete').onclick = ()=>{ printIncompleteReport(byClass); };
   app.querySelectorAll('[data-print-class]').forEach(btn=>{
     btn.onclick = (e)=>{
       e.preventDefault();
@@ -545,7 +858,7 @@ async function renderAdmin(app){
 /* ---------- STUDENT ---------- */
 async function renderStudent(app){
   app.innerHTML = `
-    <div class="card">
+    <div class="card card-sage">
       <h2>🎒 Pick your class</h2>
       <div class="row">
         <div><select id="classSelect">${classOptionsHtml()}</select></div>
@@ -577,15 +890,16 @@ function renderPlanView(className, subject, plan){
     return `<h2>${className} — ${subject}</h2><div class="empty"><span class="big">⏳</span>This week's plan isn't posted yet. Check back soon!</div>`;
   }
   return `
-    <h2>🗓️ ${className} — ${subject}${plan.teacherName ? ' — ' + escapeHtml(plan.teacherName) : ''} <span class="status-pill ok">Posted</span></h2>
+    <h2>🗓️ ${className} — ${subject}${plan.teacherName ? ' — <span style="text-transform:uppercase;">' + escapeHtml(plan.teacherName) + '</span>' : ''} <span class="status-pill ok">Posted</span></h2>
+    ${plan.starOfWeek ? `<div class="star-banner">🌟✨ STAR OF THE WEEK ✨🌟<br>⭐🎉 ${escapeHtml(plan.starOfWeek)} 🎉⭐</div>` : ''}
     <div class="timetable">
       ${DAYS.map(([key,label])=>`
         <div class="day-col">
           <div class="day-name">${label}</div>
           <span class="field-tag">Topic</span>
-          <p style="font-size:13px;margin:0 0 8px;">${plan.days[key]?.topic ? escapeHtml(plan.days[key].topic) : '<em style="color:#aab4bd;">—</em>'}</p>
-          <span class="field-tag">Homework</span>
-          <p style="font-size:13px;margin:0;">${plan.days[key]?.homework ? escapeHtml(plan.days[key].homework) : '<em style="color:#aab4bd;">—</em>'}</p>
+          <p dir="auto" style="font-size:13px;margin:0 0 8px;">${plan.days[key]?.topic ? escapeHtml(plan.days[key].topic) : '<em style="color:#aa9a80;">—</em>'}</p>
+          <span class="field-tag">Tasks / Exam</span>
+          <p dir="auto" style="font-size:13px;margin:0;">${plan.days[key]?.homework ? escapeHtml(plan.days[key].homework) : '<em style="color:#aa9a80;">—</em>'}</p>
         </div>
       `).join('')}
     </div>
@@ -597,14 +911,93 @@ function escapeHtml(s){
 }
 
 /* ---------- PRINT / PDF ---------- */
+function starLineHtml(x){
+  return `<div class="print-star-line">⭐🎉 <strong>${x.subject}:</strong> ${escapeHtml(x.plan.starOfWeek)} 🎉⭐</div>`;
+}
+function starBoxHtml(stars){
+  if(!stars.length) return '';
+  let body;
+  if(stars.length >= 6){
+    const mid = Math.ceil(stars.length / 2);
+    const left = stars.slice(0, mid);
+    const right = stars.slice(mid);
+    body = `
+      <div class="print-star-columns">
+        <div class="print-star-col">${left.map(starLineHtml).join('')}</div>
+        <div class="print-star-divider"><span>🏆</span></div>
+        <div class="print-star-col">${right.map(starLineHtml).join('')}</div>
+      </div>`;
+  }else{
+    body = stars.map(starLineHtml).join('');
+  }
+  return `
+    <div class="print-star-box">
+      <div class="print-star-title">🌟✨ STAR OF THE WEEK ✨🌟</div>
+      ${body}
+    </div>`;
+}
+function printIncompleteReport(byClass){
+  let anyMissing = false;
+  const sections = CLASS_STRUCTURE.map(g=>{
+    const lines = [];
+    g.classes.forEach(cls=>{
+      const row = byClass[cls];
+      row.subs.forEach((s,i)=>{
+        const p = row.plans[i];
+        if(!p || !p.submittedAt){
+          const teacher = TEACHER_DIRECTORY[planEntryKey(cls, s)] || '—';
+          lines.push({cls, subject:s, teacher});
+        }
+      });
+    });
+    if(!lines.length) return '';
+    anyMissing = true;
+    return `
+      <h3 class="print-class-title" style="margin-top:18px;">${g.grade}</h3>
+      <table class="print-table">
+        <colgroup><col style="width:25%"><col style="width:40%"><col style="width:35%"></colgroup>
+        <thead><tr><th>Class</th><th>Subject</th><th>Teacher</th></tr></thead>
+        <tbody>
+          ${lines.map(l=>`<tr><td>${l.cls}</td><td>${l.subject}</td><td style="text-transform:uppercase;">${escapeHtml(l.teacher)}</td></tr>`).join('')}
+        </tbody>
+      </table>`;
+  }).join('');
+
+  const printArea = document.getElementById('printArea');
+  printArea.innerHTML = `
+    <div class="print-header">
+      <h1>AL NOAIMEYAH GIRLS SCHOOL</h1>
+      <p class="print-cycle">CYCLE 1 &nbsp;•&nbsp; CYCLE 2 &nbsp;•&nbsp; CYCLE 3</p>
+    </div>
+    <h2 class="print-class-title">🚨 Incomplete Weekly Plans</h2>
+    <p class="print-sub">${weekLabelText(weekStart)}</p>
+    ${anyMissing ? sections : `
+      <div class="print-star-box">
+        <div class="print-star-title">🎉 ALL PLANS POSTED 🎉</div>
+        <div class="print-star-line">Every class and subject is up to date this week!</div>
+      </div>`}
+  `;
+  window.print();
+}
 async function printClassSchedule(className){
   const subs = subjectsForClass(className);
   const plans = await Promise.all(subs.map(s=>loadPlan(className, s, weekStart)));
+  const stars = subs.map((s,i)=>({subject:s, plan:plans[i]}))
+    .filter(x=>x.plan && x.plan.submittedAt && x.plan.starOfWeek);
   const printArea = document.getElementById('printArea');
   printArea.innerHTML = `
-    <h1>${className} — Weekly Plan</h1>
+    <div class="print-header">
+      <h1>AL NOAIMEYAH GIRLS SCHOOL</h1>
+      <p class="print-cycle">CYCLE 1 &nbsp;•&nbsp; CYCLE 2 &nbsp;•&nbsp; CYCLE 3</p>
+    </div>
+    <h2 class="print-class-title">${className} — Weekly Plan</h2>
     <p class="print-sub">${weekLabelText(weekStart)}</p>
+    ${starBoxHtml(stars)}
     <table class="print-table">
+      <colgroup>
+        <col style="width:15%">
+        ${DAYS.map(()=>'<col style="width:17%">').join('')}
+      </colgroup>
       <thead><tr><th>Subject</th>${DAYS.map(([k,l])=>`<th>${l}</th>`).join('')}</tr></thead>
       <tbody>
         ${subs.map((s,i)=>{
@@ -615,7 +1008,7 @@ async function printClassSchedule(className){
             ${DAYS.map(([k])=>{
               if(!posted) return `<td class="print-empty">—</td>`;
               const day = p.days[k] || {};
-              return `<td>${day.topic ? escapeHtml(day.topic) : '—'}${day.homework ? `<br><em>HW: ${escapeHtml(day.homework)}</em>` : ''}</td>`;
+              return `<td dir="auto">${day.topic ? escapeHtml(day.topic) : '—'}${day.homework ? `<br><em>Task/Exam: ${escapeHtml(day.homework)}</em>` : ''}</td>`;
             }).join('')}
           </tr>`;
         }).join('')}

@@ -638,13 +638,14 @@ async function savePlan(className, subject, ws, plan){
 async function loadSettings(){
   try{
     const doc = await db.collection('settings').doc('main').get();
-    return doc.exists ? doc.data() : {teacherPin:'1234'};
-  }catch(e){ console.error('loadSettings failed:', e); return {teacherPin:'1234'}; }
+    return doc.exists ? doc.data() : {teacherPin:'1234', adminPin:'2026'};
+  }catch(e){ console.error('loadSettings failed:', e); return {teacherPin:'1234', adminPin:'2026'}; }
 }
 async function saveSettings(settings){
   await db.collection('settings').doc('main').set(settings);
 }
 let teacherUnlocked = false;
+let adminUnlocked = false;
 
 function render(){
   document.getElementById('weekLabel').textContent = weekLabelText(weekStart);
@@ -670,7 +671,7 @@ async function renderTeacher(app){
     const tryUnlock = async ()=>{
       const settings = await loadSettings();
       const entered = document.getElementById('pinInput').value.trim();
-      if(entered && entered === settings.teacherPin){
+      if(entered && entered === (settings.teacherPin || '1234')){
         teacherUnlocked = true;
         render();
       }else{
@@ -764,6 +765,33 @@ async function buildConsolidated(){
   }));
 }
 async function renderAdmin(app){
+  if(!adminUnlocked){
+    app.innerHTML = `<div class="card empty"><span class="big">⏳</span>Loading…</div>`;
+    const settings = await loadSettings();
+    const correctPin = settings.adminPin || '2026';
+    app.innerHTML = `
+      <div class="card card-rust">
+        <h2>🔒 Admin access</h2>
+        <p class="hint" style="margin-bottom:12px;">Enter the admin PIN to view the dashboard.</p>
+        <div class="row">
+          <div><input type="text" id="adminPinInput" placeholder="PIN" style="letter-spacing:3px;"></div>
+          <div style="flex:0 0 auto;"><button class="btn btn-primary" id="adminPinSubmit">Unlock</button></div>
+        </div>
+      </div>
+    `;
+    const tryUnlock = ()=>{
+      const entered = document.getElementById('adminPinInput').value.trim();
+      if(entered && entered === correctPin){
+        adminUnlocked = true;
+        render();
+      }else{
+        toast('Incorrect PIN');
+      }
+    };
+    document.getElementById('adminPinSubmit').onclick = tryUnlock;
+    document.getElementById('adminPinInput').onkeydown = (e)=>{ if(e.key==='Enter') tryUnlock(); };
+    return;
+  }
   app.innerHTML = `<div class="card empty"><span class="big">⏳</span>Loading dashboard…</div>`;
   const settings = await loadSettings();
   const rows = await buildConsolidated();
@@ -777,8 +805,16 @@ async function renderAdmin(app){
       <h2>🔐 Teacher access PIN</h2>
       <p class="hint" style="margin-bottom:12px;">Teachers need this PIN before they can post or edit a weekly plan. Share it only with your teaching staff.</p>
       <div class="row">
-        <div><input type="text" id="pinField" value="${escapeHtml(settings.teacherPin)}" style="letter-spacing:3px;"></div>
+        <div><input type="text" id="pinField" value="${escapeHtml(settings.teacherPin || '1234')}" style="letter-spacing:3px;"></div>
         <div style="flex:0 0 auto;"><button class="btn btn-primary" id="savePin">Save PIN</button></div>
+      </div>
+    </div>
+    <div class="card card-rust">
+      <h2>🔒 Admin access PIN</h2>
+      <p class="hint" style="margin-bottom:12px;">This is the PIN needed to open this dashboard at all. Keep it private, and change it from the default.</p>
+      <div class="row">
+        <div><input type="text" id="adminPinField" value="${escapeHtml(settings.adminPin || '2026')}" style="letter-spacing:3px;"></div>
+        <div style="flex:0 0 auto;"><button class="btn btn-primary" id="saveAdminPin">Save PIN</button></div>
       </div>
     </div>
     <div class="card card-sage">
@@ -834,6 +870,12 @@ async function renderAdmin(app){
     if(!newPin){ toast('Enter a PIN first'); return; }
     await saveSettings({...settings, teacherPin:newPin});
     toast('Teacher PIN updated');
+  };
+  document.getElementById('saveAdminPin').onclick = async ()=>{
+    const newPin = document.getElementById('adminPinField').value.trim();
+    if(!newPin){ toast('Enter a PIN first'); return; }
+    await saveSettings({...settings, adminPin:newPin});
+    toast('Admin PIN updated');
   };
   document.getElementById('printIncomplete').onclick = ()=>{ printIncompleteReport(byClass); };
   app.querySelectorAll('[data-print-class]').forEach(btn=>{

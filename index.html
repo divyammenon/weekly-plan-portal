@@ -300,10 +300,10 @@ const db = firebase.firestore();
 
 const DAYS = [['mon','Mon'],['tue','Tue'],['wed','Wed'],['thu','Thu'],['fri','Fri']];
 const CLASS_STRUCTURE = [
-  {grade:'Grade 1', classes:['1-1','1-2']},
-  {grade:'Grade 2', classes:['2-1','2-2','2-3']},
-  {grade:'Grade 3', classes:['3-1','3-2']},
-  {grade:'Grade 4', classes:['4-1','4-2']},
+  {grade:'Grade 1', classes:['Grade 1']},
+  {grade:'Grade 2', classes:['Grade 2']},
+  {grade:'Grade 3', classes:['Grade 3']},
+  {grade:'Grade 4', classes:['Grade 4']},
   {grade:'Grade 5', classes:['Grade 5']},
   {grade:'Grade 6', classes:['Grade 6']},
   {grade:'Grade 7', classes:['7-1','7-2']},
@@ -324,32 +324,25 @@ const ALL_CLASSES = CLASS_STRUCTURE.flatMap(g=>g.classes);
 const GRADE1_TO_8 = CLASS_STRUCTURE.slice(0,8).flatMap(g=>g.classes);
 const GRADE1_TO_2 = CLASS_STRUCTURE.slice(0,2).flatMap(g=>g.classes);
 const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
-/* Music/Arts and AI & Technology don't run in every class — built from the
-   actual staffing list rather than a blanket "all classes" rule. */
-const MUSIC_ARTS_CLASSES = [...GRADE1_TO_8, '9 GEN', '9 ADV', '10 GEN'];
-const AI_TECH_CLASSES = ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV');
 
 /* Single source of truth for each subject's display name (English + Arabic).
    SUBJECT_CLASS_MAP and TEACHER_DIRECTORY both reference these constants
    instead of retyping the string, so editing the Arabic text here updates
    everywhere at once and can never fall out of sync again. */
 const SUBJ = {
-  ENGLISH: 'ENGLISH انجلش ',
-  ARABIC: 'ARABIC اللغة العربية  ',
-  ISLAMIC: 'ISLAMIC  إسلامية ',
+  ENGLISH: 'ENGLISH اللغة الانجليزية ',
+  ARABIC: 'ARABIC اللغة العربية ',
+  ISLAMIC: 'ISLAMIC  التربية الاسلامية ',
   MATHEMATICS: 'MATHEMATICSالرياضيات ',
-  PE: 'PE الرياضة ',
-  SOCIAL_STUDIES: 'SOCIAL STUDIES اجتماعيات ',
+  SOCIAL_STUDIES: 'SOCIAL STUDIES  الدراسات الاجتماعية ',
   AI_TECH: 'AI AND TECHNOLOGY',
-  ACTIVITY: 'ACTIVITY حصة النشاط ',
-  MUSIC: 'MUSIC موسيقى ',
-  ARTS: 'ARTS فنية ',
-  SCIENCE: 'SCIENCE علوم ',
+  ACTIVITY: 'ACTIVITY الفعاليات والانشطة ',
+  SCIENCE: 'SCIENCE العلوم ',
   FRENCH: 'FRENCH اللغة الفرنسية  ',
   HEALTH_SCIENCE: 'HEALTH SCIENCE العلوم الصحية  ',
   PHYSICS: 'PHYSICS الفيزياء ',
   BIOLOGY: 'BIOLOGY الاحياء ',
-  CHEMISTRY: 'CHEMISTRY كيمياء '
+  CHEMISTRY: 'CHEMISTRY الكيمياء '
 };
 
 const SUBJECT_CLASS_MAP = {
@@ -357,12 +350,9 @@ const SUBJECT_CLASS_MAP = {
   [SUBJ.ARABIC]: ALL_CLASSES,
   [SUBJ.ISLAMIC]: ALL_CLASSES,
   [SUBJ.MATHEMATICS]: ALL_CLASSES,
-  [SUBJ.PE]: ALL_CLASSES,
   [SUBJ.SOCIAL_STUDIES]: ALL_CLASSES,
-  [SUBJ.AI_TECH]: AI_TECH_CLASSES,
+  [SUBJ.AI_TECH]: ALL_CLASSES.filter(c => c !== '11 ADV' && c !== '12 ADV'),
   [SUBJ.ACTIVITY]: GRADE1_TO_2,
-  [SUBJ.MUSIC]: MUSIC_ARTS_CLASSES,
-  [SUBJ.ARTS]: MUSIC_ARTS_CLASSES,
   [SUBJ.SCIENCE]: [...GRADE1_TO_8, '9 GEN', '10 GEN'],
   [SUBJ.FRENCH]: GRADE5_TO_12,
   [SUBJ.HEALTH_SCIENCE]: ['11 GEN','12 GEN1','12 ADV'],
@@ -382,71 +372,45 @@ function setTeacher(classes, subject, name){
   if(!name) return;
   classes.forEach(c=>{ TEACHER_DIRECTORY[planEntryKey(c, subject)] = name; });
 }
-setTeacher(['1-1','1-2'], SUBJ.ISLAMIC, 'Jamila');
-setTeacher(['1-1','1-2'], SUBJ.MATHEMATICS, 'Nahla');
-setTeacher(['1-1','1-2'], SUBJ.SCIENCE, 'Nahla');
-setTeacher(['1-1','1-2'], SUBJ.ENGLISH, 'SOMYAH');
-setTeacher(['1-1','1-2'], SUBJ.ARABIC, 'Jamila');
-setTeacher(['1-1','1-2'], SUBJ.PE, 'Yasmina');
-setTeacher(['1-1','1-2'], SUBJ.AI_TECH, 'Nadiya');
-setTeacher(['1-1','1-2'], SUBJ.MUSIC, 'anan');
-setTeacher(['1-1','1-2'], SUBJ.ARTS, 'heba');
-setTeacher(['1-1','1-2'], SUBJ.SOCIAL_STUDIES, 'eman');
+setTeacher(['Grade 1'], SUBJ.ISLAMIC, 'Jamila');
+setTeacher(['Grade 1'], SUBJ.MATHEMATICS, 'Nahla');
+setTeacher(['Grade 1'], SUBJ.SCIENCE, 'Nahla');
+setTeacher(['Grade 1'], SUBJ.ENGLISH, 'SOMYAH');
+setTeacher(['Grade 1'], SUBJ.ARABIC, 'Jamila');
+setTeacher(['Grade 1'], SUBJ.AI_TECH, 'Nadiya');
+setTeacher(['Grade 1'], SUBJ.SOCIAL_STUDIES, 'eman');
 setTeacher(GRADE1_TO_2, SUBJ.ACTIVITY, 'Mona A');
 
-setTeacher(['2-1','2-2'], SUBJ.ISLAMIC, 'Eman');
-setTeacher(['2-1','2-2'], SUBJ.MATHEMATICS, 'Mona A');
-setTeacher(['2-1','2-2'], SUBJ.SCIENCE, 'Mona A');
-setTeacher(['2-1','2-2'], SUBJ.ENGLISH, 'Nassra');
-setTeacher(['2-1','2-2'], SUBJ.ARABIC, 'Hamda');
-setTeacher(['2-1','2-2'], SUBJ.PE, 'Yasmina');
-setTeacher(['2-1','2-2'], SUBJ.AI_TECH, 'Nadiya');
-setTeacher(['2-1','2-2'], SUBJ.MUSIC, 'anan');
-setTeacher(['2-1','2-2'], SUBJ.ARTS, 'heba');
-setTeacher(['2-1','2-2'], SUBJ.SOCIAL_STUDIES, 'Moza H');
+setTeacher(['Grade 2'], SUBJ.ISLAMIC, 'Eman');
+setTeacher(['Grade 2'], SUBJ.MATHEMATICS, 'Mona & Aysha');
+setTeacher(['Grade 2'], SUBJ.SCIENCE, 'Mona A & Laila');
+setTeacher(['Grade 2'], SUBJ.ENGLISH, 'Nassra');
+setTeacher(['Grade 2'], SUBJ.ARABIC, 'Hamda');
+setTeacher(['Grade 2'], SUBJ.AI_TECH, 'Nadiya');
+setTeacher(['Grade 2'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 
-setTeacher(['2-3'], SUBJ.ISLAMIC, 'Eman');
-setTeacher(['2-3'], SUBJ.MATHEMATICS, 'Aysha A.');
-setTeacher(['2-3'], SUBJ.SCIENCE, 'Laila M.');
-setTeacher(['2-3'], SUBJ.ENGLISH, 'Nassra');
-setTeacher(['2-3'], SUBJ.ARABIC, 'Hamda');
-setTeacher(['2-3'], SUBJ.PE, 'Yasmina');
-setTeacher(['2-3'], SUBJ.AI_TECH, 'Nadiya');
-setTeacher(['2-3'], SUBJ.MUSIC, 'anan');
-setTeacher(['2-3'], SUBJ.ARTS, 'heba');
-setTeacher(['2-3'], SUBJ.SOCIAL_STUDIES, 'Moza H');
+setTeacher(['Grade 3'], SUBJ.ISLAMIC, 'Aishah');
+setTeacher(['Grade 3'], SUBJ.MATHEMATICS, 'SAMIRA');
+setTeacher(['Grade 3'], SUBJ.SCIENCE, 'Laila M.');
+setTeacher(['Grade 3'], SUBJ.ENGLISH, 'somyah');
+setTeacher(['Grade 3'], SUBJ.ARABIC, 'mariam M.');
+setTeacher(['Grade 3'], SUBJ.AI_TECH, 'nadiya');
+setTeacher(['Grade 3'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 
-setTeacher(['3-1','3-2'], SUBJ.ISLAMIC, 'Aishah');
-setTeacher(['3-1','3-2'], SUBJ.MATHEMATICS, 'SAMIRA');
-setTeacher(['3-1','3-2'], SUBJ.SCIENCE, 'Laila M.');
-setTeacher(['3-1','3-2'], SUBJ.ENGLISH, 'somyah');
-setTeacher(['3-1','3-2'], SUBJ.ARABIC, 'mariam M.');
-setTeacher(['3-1','3-2'], SUBJ.PE, 'Hayam');
-setTeacher(['3-1','3-2'], SUBJ.AI_TECH, 'nadiya');
-setTeacher(['3-1','3-2'], SUBJ.MUSIC, 'anan');
-setTeacher(['3-1','3-2'], SUBJ.ARTS, 'heba');
-setTeacher(['3-1','3-2'], SUBJ.SOCIAL_STUDIES, 'Moza H');
-
-setTeacher(['4-1','4-2'], SUBJ.ISLAMIC, 'Aishah');
-setTeacher(['4-1','4-2'], SUBJ.MATHEMATICS, 'AYSHA A.');
-setTeacher(['4-1','4-2'], SUBJ.SCIENCE, 'Shekha S.');
-setTeacher(['4-1','4-2'], SUBJ.ENGLISH, 'Nassra');
-setTeacher(['4-1','4-2'], SUBJ.ARABIC, 'mariam M.');
-setTeacher(['4-1','4-2'], SUBJ.PE, 'Hayam');
-setTeacher(['4-1','4-2'], SUBJ.AI_TECH, 'nadiya');
-setTeacher(['4-1','4-2'], SUBJ.MUSIC, 'anan');
-setTeacher(['4-1','4-2'], SUBJ.ARTS, 'heba');
-setTeacher(['4-1','4-2'], SUBJ.SOCIAL_STUDIES, 'Moza H');
+setTeacher(['Grade 4'], SUBJ.ISLAMIC, 'Aishah');
+setTeacher(['Grade 4'], SUBJ.MATHEMATICS, 'AYSHA A.');
+setTeacher(['Grade 4'], SUBJ.SCIENCE, 'Shekha S.');
+setTeacher(['Grade 4'], SUBJ.ENGLISH, 'Nassra');
+setTeacher(['Grade 4'], SUBJ.ARABIC, 'mariam M.');
+setTeacher(['Grade 4'], SUBJ.AI_TECH, 'nadiya');
+setTeacher(['Grade 4'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 
 setTeacher(['Grade 5'], SUBJ.ISLAMIC, 'Aishah');
 setTeacher(['Grade 5'], SUBJ.MATHEMATICS, 'Laila S.');
 setTeacher(['Grade 5'], SUBJ.SCIENCE, 'Shekha S.');
 setTeacher(['Grade 5'], SUBJ.ENGLISH, 'Somyah');
 setTeacher(['Grade 5'], SUBJ.ARABIC, 'MITHA');
-setTeacher(['Grade 5'], SUBJ.PE, 'Hayam');
 setTeacher(['Grade 5'], SUBJ.AI_TECH, 'nadiya');
-setTeacher(['Grade 5'], SUBJ.MUSIC, 'anan');
-setTeacher(['Grade 5'], SUBJ.ARTS, 'heba');
 setTeacher(['Grade 5'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 setTeacher(['Grade 5'], SUBJ.FRENCH, 'Soukina');
 
@@ -455,10 +419,7 @@ setTeacher(['Grade 6'], SUBJ.MATHEMATICS, 'Laila S.');
 setTeacher(['Grade 6'], SUBJ.SCIENCE, 'Laila M.');
 setTeacher(['Grade 6'], SUBJ.ENGLISH, 'Mona M');
 setTeacher(['Grade 6'], SUBJ.ARABIC, 'Almuna');
-setTeacher(['Grade 6'], SUBJ.PE, 'YASMINA');
 setTeacher(['Grade 6'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['Grade 6'], SUBJ.MUSIC, 'anan');
-setTeacher(['Grade 6'], SUBJ.ARTS, 'heba');
 setTeacher(['Grade 6'], SUBJ.SOCIAL_STUDIES, 'Moza A');
 setTeacher(['Grade 6'], SUBJ.FRENCH, 'Soukina');
 
@@ -467,10 +428,7 @@ setTeacher(['7-1','7-2'], SUBJ.MATHEMATICS, 'Safa');
 setTeacher(['7-1','7-2'], SUBJ.SCIENCE, 'Shaikha R');
 setTeacher(['7-1','7-2'], SUBJ.ENGLISH, 'Mona M');
 setTeacher(['7-1','7-2'], SUBJ.ARABIC, 'Mitha');
-setTeacher(['7-1','7-2'], SUBJ.PE, 'Hayam');
 setTeacher(['7-1','7-2'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['7-1','7-2'], SUBJ.MUSIC, 'anan');
-setTeacher(['7-1','7-2'], SUBJ.ARTS, 'heba');
 setTeacher(['7-1','7-2'], SUBJ.SOCIAL_STUDIES, 'Moza A');
 setTeacher(['7-1','7-2'], SUBJ.FRENCH, 'Soukina');
 
@@ -479,10 +437,7 @@ setTeacher(['Grade 8'], SUBJ.MATHEMATICS, 'Hessa');
 setTeacher(['Grade 8'], SUBJ.SCIENCE, 'Shaikha S');
 setTeacher(['Grade 8'], SUBJ.ENGLISH, 'Mona M');
 setTeacher(['Grade 8'], SUBJ.ARABIC, 'Mitha');
-setTeacher(['Grade 8'], SUBJ.PE, 'Yasmina');
 setTeacher(['Grade 8'], SUBJ.AI_TECH, 'Nadiya');
-setTeacher(['Grade 8'], SUBJ.MUSIC, 'anan');
-setTeacher(['Grade 8'], SUBJ.ARTS, 'heba');
 setTeacher(['Grade 8'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['Grade 8'], SUBJ.FRENCH, 'Soukina');
 
@@ -491,10 +446,7 @@ setTeacher(['9 GEN'], SUBJ.MATHEMATICS, 'Safa');
 setTeacher(['9 GEN'], SUBJ.SCIENCE, 'Shaikha R.');
 setTeacher(['9 GEN'], SUBJ.ENGLISH, 'Sumaira');
 setTeacher(['9 GEN'], SUBJ.ARABIC, 'Almuna');
-setTeacher(['9 GEN'], SUBJ.PE, 'Yasmina');
 setTeacher(['9 GEN'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['9 GEN'], SUBJ.MUSIC, 'anan');
-setTeacher(['9 GEN'], SUBJ.ARTS, 'heba');
 setTeacher(['9 GEN'], SUBJ.SOCIAL_STUDIES, 'Moza A.');
 setTeacher(['9 GEN'], SUBJ.FRENCH, 'Soukina');
 
@@ -503,10 +455,7 @@ setTeacher(['9 ADV'], SUBJ.MATHEMATICS, 'Laila S');
 setTeacher(['9 ADV'], SUBJ.BIOLOGY, 'Amira');
 setTeacher(['9 ADV'], SUBJ.ENGLISH, 'Sumaira');
 setTeacher(['9 ADV'], SUBJ.ARABIC, 'Almuna');
-setTeacher(['9 ADV'], SUBJ.PE, 'Yasmina');
 setTeacher(['9 ADV'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['9 ADV'], SUBJ.MUSIC, 'anan');
-setTeacher(['9 ADV'], SUBJ.ARTS, 'heba');
 setTeacher(['9 ADV'], SUBJ.SOCIAL_STUDIES, 'Moza A.');
 setTeacher(['9 ADV'], SUBJ.FRENCH, 'Soukina');
 setTeacher(['9 ADV'], SUBJ.PHYSICS, 'Noor');
@@ -516,10 +465,7 @@ setTeacher(['10 GEN'], SUBJ.MATHEMATICS, 'Samira');
 setTeacher(['10 GEN'], SUBJ.SCIENCE, 'Rawand');
 setTeacher(['10 GEN'], SUBJ.ENGLISH, 'Sumaira');
 setTeacher(['10 GEN'], SUBJ.ARABIC, 'Moza M.');
-setTeacher(['10 GEN'], SUBJ.PE, 'Hayam');
 setTeacher(['10 GEN'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['10 GEN'], SUBJ.MUSIC, 'anan');
-setTeacher(['10 GEN'], SUBJ.ARTS, 'heba');
 setTeacher(['10 GEN'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['10 GEN'], SUBJ.FRENCH, 'Soukina');
 
@@ -528,7 +474,6 @@ setTeacher(['10 ADV'], SUBJ.MATHEMATICS, 'Wajeha');
 setTeacher(['10 ADV'], SUBJ.CHEMISTRY, 'Rawand');
 setTeacher(['10 ADV'], SUBJ.ENGLISH, 'Sumaira');
 setTeacher(['10 ADV'], SUBJ.ARABIC, 'Moza M.');
-setTeacher(['10 ADV'], SUBJ.PE, 'Hayam');
 setTeacher(['10 ADV'], SUBJ.AI_TECH, 'Divya');
 setTeacher(['10 ADV'], SUBJ.SOCIAL_STUDIES, 'Salama S');
 setTeacher(['10 ADV'], SUBJ.FRENCH, 'Soukina');
@@ -539,7 +484,6 @@ setTeacher(['11 GEN'], SUBJ.MATHEMATICS, 'Hessa');
 setTeacher(['11 GEN'], SUBJ.CHEMISTRY, 'Shaikha R');
 setTeacher(['11 GEN'], SUBJ.ENGLISH, 'Bhawna');
 setTeacher(['11 GEN'], SUBJ.ARABIC, 'Almuna');
-setTeacher(['11 GEN'], SUBJ.PE, 'Hayam');
 setTeacher(['11 GEN'], SUBJ.AI_TECH, 'Divya');
 setTeacher(['11 GEN'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['11 GEN'], SUBJ.FRENCH, 'Soukina');
@@ -550,7 +494,6 @@ setTeacher(['11 ADV'], SUBJ.MATHEMATICS, 'Wajeha');
 setTeacher(['11 ADV'], SUBJ.CHEMISTRY, 'Rawand');
 setTeacher(['11 ADV'], SUBJ.ENGLISH, 'Bhawna');
 setTeacher(['11 ADV'], SUBJ.ARABIC, 'Almuna');
-setTeacher(['11 ADV'], SUBJ.PE, 'Hayam');
 setTeacher(['11 ADV'], SUBJ.SOCIAL_STUDIES, 'Salama S');
 setTeacher(['11 ADV'], SUBJ.FRENCH, 'Soukina');
 setTeacher(['11 ADV'], SUBJ.PHYSICS, 'Noor');
@@ -561,7 +504,6 @@ setTeacher(['12 GEN1'], SUBJ.MATHEMATICS, 'Hessa');
 setTeacher(['12 GEN1'], SUBJ.CHEMISTRY, 'Shaikha R');
 setTeacher(['12 GEN1'], SUBJ.ENGLISH, 'Bhawna');
 setTeacher(['12 GEN1'], SUBJ.ARABIC, 'Moza M');
-setTeacher(['12 GEN1'], SUBJ.PE, 'Yasmina');
 setTeacher(['12 GEN1'], SUBJ.AI_TECH, 'Divya');
 setTeacher(['12 GEN1'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['12 GEN1'], SUBJ.FRENCH, 'Soukina');
@@ -573,7 +515,6 @@ setTeacher(['12 ADV'], SUBJ.MATHEMATICS, 'Hessa');
 setTeacher(['12 ADV'], SUBJ.CHEMISTRY, 'Shaikha R');
 setTeacher(['12 ADV'], SUBJ.ENGLISH, 'Bhawna');
 setTeacher(['12 ADV'], SUBJ.ARABIC, 'Moza M');
-setTeacher(['12 ADV'], SUBJ.PE, 'Yasmina');
 setTeacher(['12 ADV'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['12 ADV'], SUBJ.FRENCH, 'Soukina');
 setTeacher(['12 ADV'], SUBJ.HEALTH_SCIENCE, 'Amira');

@@ -306,7 +306,7 @@ const CLASS_STRUCTURE = [
   {grade:'Grade 4', classes:['Grade 4']},
   {grade:'Grade 5', classes:['Grade 5']},
   {grade:'Grade 6', classes:['Grade 6']},
-  {grade:'Grade 7', classes:['Grade 7']},
+  {grade:'Grade 7', classes:['7-1','7-2']},
   {grade:'Grade 8', classes:['Grade 8']},
   {grade:'Grade 9', classes:['9 GEN','9 ADV']},
   {grade:'Grade 10', classes:['10 GEN','10 ADV']},
@@ -331,12 +331,12 @@ const GRADE5_TO_12 = CLASS_STRUCTURE.slice(4).flatMap(g=>g.classes);
    everywhere at once and can never fall out of sync again. */
 const SUBJ = {
   ENGLISH: 'ENGLISH اللغة الانجليزية ',
-  ARABIC: 'ARABIC اللغة العربية ',
+  ARABIC: 'ARABIC اللغة العربية  ',
   ISLAMIC: 'ISLAMIC  التربية الاسلامية ',
   MATHEMATICS: 'MATHEMATICSالرياضيات ',
-  SOCIAL_STUDIES: 'SOCIAL STUDIES  الدراسات الاجتماعية ',
+  SOCIAL_STUDIES: 'SOCIAL STUDIES الدراسات الاجتماعيات ',
   AI_TECH: 'AI AND TECHNOLOGY',
-  ACTIVITY: 'ACTIVITY الفعاليات والانشطة ',
+  ACTIVITY: 'ACTIVITY حصة النشاط ',
   SCIENCE: 'SCIENCE العلوم ',
   FRENCH: 'FRENCH اللغة الفرنسية  ',
   HEALTH_SCIENCE: 'HEALTH SCIENCE العلوم الصحية  ',
@@ -355,7 +355,7 @@ const SUBJECT_CLASS_MAP = {
   [SUBJ.ACTIVITY]: GRADE1_TO_2,
   [SUBJ.SCIENCE]: [...GRADE1_TO_8, '9 GEN', '10 GEN'],
   [SUBJ.FRENCH]: GRADE5_TO_12,
-  [SUBJ.HEALTH_SCIENCE]: ['11 GEN','12 GEN1','12 ADV'],
+  [SUBJ.HEALTH_SCIENCE]: ['11 GEN','11 ADV','12 GEN1','12 ADV'],
   [SUBJ.PHYSICS]: ['9 ADV','10 ADV','11 ADV','12 GEN1','12 ADV'],
   [SUBJ.BIOLOGY]: ['9 ADV','11 GEN','11 ADV','12 GEN1','12 ADV'],
   [SUBJ.CHEMISTRY]: ['10 ADV','11 GEN','11 ADV','12 GEN1','12 ADV']
@@ -382,8 +382,8 @@ setTeacher(['Grade 1'], SUBJ.SOCIAL_STUDIES, 'eman');
 setTeacher(GRADE1_TO_2, SUBJ.ACTIVITY, 'Mona A');
 
 setTeacher(['Grade 2'], SUBJ.ISLAMIC, 'Eman');
-setTeacher(['Grade 2'], SUBJ.MATHEMATICS, 'Mona & Aysha');
-setTeacher(['Grade 2'], SUBJ.SCIENCE, 'Mona A & Laila');
+setTeacher(['Grade 2'], SUBJ.MATHEMATICS, 'Mona A');
+setTeacher(['Grade 2'], SUBJ.SCIENCE, 'Mona A');
 setTeacher(['Grade 2'], SUBJ.ENGLISH, 'Nassra');
 setTeacher(['Grade 2'], SUBJ.ARABIC, 'Hamda');
 setTeacher(['Grade 2'], SUBJ.AI_TECH, 'Nadiya');
@@ -392,17 +392,17 @@ setTeacher(['Grade 2'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 setTeacher(['Grade 3'], SUBJ.ISLAMIC, 'Aishah');
 setTeacher(['Grade 3'], SUBJ.MATHEMATICS, 'SAMIRA');
 setTeacher(['Grade 3'], SUBJ.SCIENCE, 'Laila M.');
-setTeacher(['Grade 3'], SUBJ.ENGLISH, 'Somyah');
-setTeacher(['Grade 3'], SUBJ.ARABIC, 'Mariam M.');
-setTeacher(['Grade 3'], SUBJ.AI_TECH, 'Nadiya');
+setTeacher(['Grade 3'], SUBJ.ENGLISH, 'somyah');
+setTeacher(['Grade 3'], SUBJ.ARABIC, 'mariam M.');
+setTeacher(['Grade 3'], SUBJ.AI_TECH, 'nadiya');
 setTeacher(['Grade 3'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 
 setTeacher(['Grade 4'], SUBJ.ISLAMIC, 'Aishah');
 setTeacher(['Grade 4'], SUBJ.MATHEMATICS, 'AYSHA A.');
 setTeacher(['Grade 4'], SUBJ.SCIENCE, 'Shekha S.');
 setTeacher(['Grade 4'], SUBJ.ENGLISH, 'Nassra');
-setTeacher(['Grade 4'], SUBJ.ARABIC, 'Mariam M.');
-setTeacher(['Grade 4'], SUBJ.AI_TECH, 'Nadiya');
+setTeacher(['Grade 4'], SUBJ.ARABIC, 'mariam M.');
+setTeacher(['Grade 4'], SUBJ.AI_TECH, 'nadiya');
 setTeacher(['Grade 4'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 
 setTeacher(['Grade 5'], SUBJ.ISLAMIC, 'Aishah');
@@ -410,7 +410,7 @@ setTeacher(['Grade 5'], SUBJ.MATHEMATICS, 'Laila S.');
 setTeacher(['Grade 5'], SUBJ.SCIENCE, 'Shekha S.');
 setTeacher(['Grade 5'], SUBJ.ENGLISH, 'Somyah');
 setTeacher(['Grade 5'], SUBJ.ARABIC, 'MITHA');
-setTeacher(['Grade 5'], SUBJ.AI_TECH, 'Nadiya');
+setTeacher(['Grade 5'], SUBJ.AI_TECH, 'nadiya');
 setTeacher(['Grade 5'], SUBJ.SOCIAL_STUDIES, 'Moza H');
 setTeacher(['Grade 5'], SUBJ.FRENCH, 'Soukina');
 
@@ -423,14 +423,14 @@ setTeacher(['Grade 6'], SUBJ.AI_TECH, 'Divya');
 setTeacher(['Grade 6'], SUBJ.SOCIAL_STUDIES, 'Moza A');
 setTeacher(['Grade 6'], SUBJ.FRENCH, 'Soukina');
 
-setTeacher(['Grade 7'], SUBJ.ISLAMIC, 'Aishah');
-setTeacher(['Grade 7'], SUBJ.MATHEMATICS, 'Safa');
-setTeacher(['Grade 7'], SUBJ.SCIENCE, 'Shaikha R');
-setTeacher(['Grade 7'], SUBJ.ENGLISH, 'Mona M');
-setTeacher(['Grade 7'], SUBJ.ARABIC, 'Mitha');
-setTeacher(['Grade 7'], SUBJ.AI_TECH, 'Divya');
-setTeacher(['Grade 7'], SUBJ.SOCIAL_STUDIES, 'Moza A');
-setTeacher(['Grade 7'], SUBJ.FRENCH, 'Soukina');
+setTeacher(['7-1','7-2'], SUBJ.ISLAMIC, 'Aishah');
+setTeacher(['7-1','7-2'], SUBJ.MATHEMATICS, 'Safa');
+setTeacher(['7-1','7-2'], SUBJ.SCIENCE, 'Shaikha R');
+setTeacher(['7-1','7-2'], SUBJ.ENGLISH, 'Mona M');
+setTeacher(['7-1','7-2'], SUBJ.ARABIC, 'Mitha');
+setTeacher(['7-1','7-2'], SUBJ.AI_TECH, 'Divya');
+setTeacher(['7-1','7-2'], SUBJ.SOCIAL_STUDIES, 'Moza A');
+setTeacher(['7-1','7-2'], SUBJ.FRENCH, 'Soukina');
 
 setTeacher(['Grade 8'], SUBJ.ISLAMIC, 'Hamama');
 setTeacher(['Grade 8'], SUBJ.MATHEMATICS, 'Hessa');
@@ -470,7 +470,7 @@ setTeacher(['10 GEN'], SUBJ.SOCIAL_STUDIES, 'Salama S.');
 setTeacher(['10 GEN'], SUBJ.FRENCH, 'Soukina');
 
 setTeacher(['10 ADV'], SUBJ.ISLAMIC, 'Hamama');
-setTeacher(['10 ADV'], SUBJ.MATHEMATICS, 'Wajeha');
+setTeacher(['10 ADV'], SUBJ.MATHEMATICS, 'Wajiha');
 setTeacher(['10 ADV'], SUBJ.CHEMISTRY, 'Rawand');
 setTeacher(['10 ADV'], SUBJ.ENGLISH, 'Sumaira');
 setTeacher(['10 ADV'], SUBJ.ARABIC, 'Moza M.');
@@ -490,7 +490,7 @@ setTeacher(['11 GEN'], SUBJ.FRENCH, 'Soukina');
 setTeacher(['11 GEN'], SUBJ.HEALTH_SCIENCE, 'Amira');
 
 setTeacher(['11 ADV'], SUBJ.ISLAMIC, 'Hamama');
-setTeacher(['11 ADV'], SUBJ.MATHEMATICS, 'Wajeha');
+setTeacher(['11 ADV'], SUBJ.MATHEMATICS, 'Wajiha');
 setTeacher(['11 ADV'], SUBJ.CHEMISTRY, 'Rawand');
 setTeacher(['11 ADV'], SUBJ.ENGLISH, 'Bhawna');
 setTeacher(['11 ADV'], SUBJ.ARABIC, 'Almuna');
@@ -498,6 +498,7 @@ setTeacher(['11 ADV'], SUBJ.SOCIAL_STUDIES, 'Salama S');
 setTeacher(['11 ADV'], SUBJ.FRENCH, 'Soukina');
 setTeacher(['11 ADV'], SUBJ.PHYSICS, 'Noor');
 setTeacher(['11 ADV'], SUBJ.BIOLOGY, 'Amira');
+setTeacher(['11 ADV'], SUBJ.HEALTH_SCIENCE, 'Amira');
 
 setTeacher(['12 GEN1'], SUBJ.ISLAMIC, 'Hamama');
 setTeacher(['12 GEN1'], SUBJ.MATHEMATICS, 'Hessa');
@@ -903,7 +904,7 @@ function renderPlanView(className, subject, plan){
     return `<h2>${className} — ${subject}</h2><div class="empty"><span class="big">⏳</span>This week's plan isn't posted yet. Check back soon!</div>`;
   }
   return `
-    <h2>🗓️ ${className} — ${subject}${plan.teacherName ? ' — <span style="text-transform:uppercase;">' + escapeHtml(plan.teacherName) + '</span>' : ''} <span class="status-pill ok">Posted</span></h2>
+    <h2>🗓️ ${className} — ${subject}${(TEACHER_DIRECTORY[planEntryKey(className, subject)] || plan.teacherName) ? ' — <span style="text-transform:uppercase;">' + escapeHtml(TEACHER_DIRECTORY[planEntryKey(className, subject)] || plan.teacherName) + '</span>' : ''} <span class="status-pill ok">Posted</span></h2>
     ${plan.starOfWeek ? `<div class="star-banner">🌟✨ STAR OF THE WEEK ✨🌟<br>⭐🎉 ${escapeHtml(plan.starOfWeek)} 🎉⭐</div>` : ''}
     <div class="timetable">
       ${DAYS.map(([key,label])=>`
@@ -1017,7 +1018,7 @@ async function printClassSchedule(className){
           const p = plans[i];
           const posted = p && p.submittedAt;
           return `<tr>
-            <td><strong>${s}</strong>${posted && p.teacherName ? `<br><span class="print-teacher">${escapeHtml(p.teacherName)}</span>` : ''}</td>
+            <td><strong>${s}</strong>${posted && (TEACHER_DIRECTORY[planEntryKey(className, s)] || p.teacherName) ? `<br><span class="print-teacher">${escapeHtml(TEACHER_DIRECTORY[planEntryKey(className, s)] || p.teacherName)}</span>` : ''}</td>
             ${DAYS.map(([k])=>{
               if(!posted) return `<td class="print-empty">—</td>`;
               const day = p.days[k] || {};
